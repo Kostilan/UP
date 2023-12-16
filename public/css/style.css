@@ -1,0 +1,171 @@
+@font-face {
+    font-family: "OpenSans-regular";
+    src: url(../fonts/Open_Sans/static/OpenSans-Regular.ttf);
+}
+@font-face {
+    font-family: "OpenSans-italic";
+    src: url(../fonts/Open_Sans/static/OpenSans_SemiCondensed-Italic.ttf);
+}
+@font-face {
+    font-family: "OpenSans-bold";
+    src: url(../fonts/Open_Sans/static/OpenSans-Bold.ttf);
+}
+@font-face {
+    font-family: "OpenSans-bold-italic";
+    src: url(../fonts/Open_Sans/static/OpenSans-BoldItalic.ttf);
+}
+* {
+    font-family: "OpenSans-regular";
+    font-weight: 500;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  a{
+    text-decoration: none;
+    color:black;
+  }
+  a:hover{
+    color:rgb(87, 87, 187); 
+  }
+  a:focus{
+    color: yellow;
+  }
+
+  .modal{
+   display: none;
+   background-color: rgba(0,0,0, 0.4);
+   overflow: hidden;
+   overflow-y: auto;
+   flex-flow: nowrap;
+   justify-content: center;
+   align-items: center;
+   z-index: 99;
+   /* padding:30px 0; */
+  }
+  .modal-wrap{
+   display: flex; 
+   flex-shrink: 0;
+    flex-grow: 0;
+    width: 100%;
+    min-height: 100%;
+    margin: auto;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-window{
+   margin: 5vh;
+   padding: 5vh;
+   border-radius: 1vh;
+   flex-shrink: 0;
+   flex-grow: 0;
+   background: #fff;
+   width: 600px;
+   max-width: 100%;
+   overflow: visible;
+   transition: transform 0.2s ease 0s, opacity 0.2s ease 0s;
+   transform: scale(0.9);
+   position: relative;
+  }
+  .modal-close{
+   align-items:center;
+   color: #3f3a3a;
+   padding: 1vh;
+   margin-top: 5%;
+   margin-right: 5%;
+   font-size: 3vh;
+   font-weight: bold;
+   border: none;
+   position: absolute;
+   right: 0;
+   top: 0;
+  }
+  .modal-close:hover,
+  .modal-close:focus{
+   color:black;
+   text-decoration: none;
+   cursor:pointer;
+  }
+
+ .book-list{
+    justify-content: end;
+ }
+ .book{
+    width: 15vw; 
+   height: 40vh;
+    margin-top: 10vh;
+    margin-bottom: 10vh;
+    margin-left: 10vw;
+    /* background-color: aqua; */
+ }
+ .main-book-img{
+    width: 15vw;
+    height: 45vh;
+ }
+
+ .book-container{
+    /* margin: 0 3vw;  */
+    margin-top: 5vh;
+ }
+ .book-container>img{
+    height: 75vh;
+    width: 25vw;
+ }
+ .book-text-name{
+    font-family: "OpenSans-bold";
+    font-size: 4vh;
+ }
+ .book-divider-line{
+    display: inline-block;
+    vertical-align: top;
+    height: 10vh;
+    width: 0.3vh;
+    background: #C4C4C6;
+    margin-left: 1vw;
+    margin-right: 1vw;
+ }
+ .book-block{
+    display: inline-block;
+    padding-left:1vw;
+    padding-right:1vw;
+    box-shadow: none;
+    height: 8vh;
+    line-height: 8vh;
+    background-color: #f5f5f5;
+    text-transform: uppercase;
+    font-weight: bold;
+ }
+
+ .book-block-buy{
+    display: inline-block;
+    padding-left:1vw;
+    padding-right:1vw;
+    box-shadow: none;
+    height: 8vh;
+    line-height: 8vh;
+    background-color: #f5f5f5;
+    text-transform: uppercase;
+    font-size: 5vh;
+    margin-left: 5vw;
+    font-weight: bold;
+ }
+
+.book-account{
+   width: 15vw; 
+   height: 25vh;
+  margin-top: 10vh;
+  margin-bottom: 30vh;
+  margin-right: 10vw;
+}
+.accountUser{
+   margin-left: 10vw;
+}
+
+.book-edit{
+   width: 15vw; 
+   height: 40vh;
+    margin-top: 10vh;
+    margin-bottom: 25vh;
+    margin-left: 10vw;  
+}
