@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
 use App\Models\Book;
+use App\Models\BookMark;
 
 
 class UserController extends Controller
@@ -102,7 +103,10 @@ class UserController extends Controller
     }
 
     public function accountBookMarks(){
-        $books = Book::paginate(9);
+        $bookMarks = Auth::user()->book_marks;
+        $bookIds = $bookMarks->pluck('book_id')->toArray();
+        $books =  Book::whereIn('id', $bookIds)->paginate(9);;
+        // $books = Book::paginate(9);
         return view('accountBookMarks', compact('books'));
     }
 }

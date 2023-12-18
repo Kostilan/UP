@@ -9,6 +9,8 @@ use App\Models\Author;
 use App\Models\Genre;
 use App\Models\Publication;
 use App\Models\BookCategory;
+use App\Models\Review;
+use App\Models\Comment;
 
 class Book extends Model
 {
@@ -34,6 +36,14 @@ class Book extends Model
     }
     public function publication(){
         return $this->belongsTo(Publication::class);
+    }
+
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
+
+    public function review(){
+        return $this->hasMany(Review::class);
     }
   
 }

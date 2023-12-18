@@ -8,6 +8,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+Use App\Models\BookMark;
+Use App\Models\Review;
+Use App\Models\Comment;
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -47,4 +51,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    function book_marks() {
+        return $this->hasMany(BookMark::class);
+    }
+
+    public function comment(){
+        return $this->hasMany(Comment::class);
+    }
+
+    public function review(){
+        return $this->hasMany(Review::class);
+    }
 }

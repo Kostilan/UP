@@ -16,7 +16,7 @@
     </div>
     <div class="list-catalog">
       @foreach ($books->chunk(3) as $chunkedBooks)
-          <div class="d-flex book-list">
+          <div class="d-flex book-list mb-5">
               @foreach ($chunkedBooks as $book)
                   <div class="book">
                       <a href="{{ url('bookProduct', $book->id) }}">
@@ -32,7 +32,7 @@
       @endforeach
 
       <div class="pagination">
-          {{ $books->links() }}
-      </div>
+        {{ $books->links('vendor.pagination.custom') }}
+    </div>
   </div>
 @endsection

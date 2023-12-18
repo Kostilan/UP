@@ -20,13 +20,19 @@
 <body>
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">ПроЧитай</a>
+      <a class="navbar-brand" href="/">ПроЧитай</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" href="/newBooks">Новое</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/">Популярное</a>
+          </li>
           @auth
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/account">Аккаунт</a>
@@ -35,12 +41,6 @@
             <a class="nav-link active" aria-current="page" href="/signout">Выход</a>
           </li>
           @endauth
-          <li class="nav-item">
-            <a class="nav-link active" href="index.html">Новое</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" href="index.html">Популярное</a>
-          </li>
           <li class="nav-item">
             @guest
             <div class="d-flex">
@@ -133,7 +133,7 @@
         <!-- Этот блок будет заполняться содержимым из производных шаблонов -->
     </div>
 
-    <footer>
+    <footer class="mt-5">
         <!-- Нижний колонтитул сайта -->
         <p>&copy; 2023 Мой сайт. Все права защищены.</p>
     </footer>
