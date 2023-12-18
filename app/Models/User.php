@@ -14,6 +14,8 @@ Use App\Models\Comment;
 
 class User extends Authenticatable
 {
+    
+
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
@@ -63,4 +65,10 @@ class User extends Authenticatable
     public function review(){
         return $this->hasMany(Review::class);
     }
+
+    public function hasRole($role)
+{
+
+    return $this->role_id === $role;
+}
 }

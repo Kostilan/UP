@@ -23,27 +23,28 @@ class BookController extends Controller
         return view('index', ["books"=>$books, "genres"=>$genre]);
     }
 
-    public function bookProduct($id){
-        $book = Book::find($id);
+        public function bookProduct($id){
+            $book = Book::find($id);
 
-        // Проверка аутентификации пользователя
-    if (Auth::check()) {
-        $bookMarks = Auth::user()->book_marks;
+            // Проверка аутентификации пользователя
+        if (Auth::check()) {
+            $bookMarks = Auth::user()->book_marks;
+            $isBookMark = false;
 
-        foreach ($bookMarks as $key => $value) {
-            if($value->book_id == $id) {
-                $isBookMark = true;
-                break; // Прерываю цикл, так как закладка уже найдена
+            foreach ($bookMarks as $key => $value) {
+                if($value->book_id == $id) {
+                    $isBookMark = true;
+                    break; // Прерываю цикл, так как закладка уже найдена
+                }
             }
         }
-    }
-        return view("bookProduct",
-        [
-            'book' => $book,
-            'isBookMark' => (Auth::check() && count($bookMarks) > 0)
-        ]
-        );
-    }
+            return view("bookProduct",
+            [
+                'book' => $book,
+                'isBookMark' => (Auth::check() && $isBookMark)
+            ]
+            );
+        }
 
         public function bookMarksCreate($id){
             $book_id = Book::find($id);

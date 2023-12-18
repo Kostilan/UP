@@ -12,12 +12,12 @@
             <p class="fw-bold">Автор: <a href="">{{ $book->author->surname_author }}
                     {{ $book->author->name_author }}</a></p>
             <div class="d-flex">
-                <span class="text-warning  fs-4">4.5 &#9733; <br>
-                    <p class="text-dark opacity-75 fs-5">168</p>
+                <span class="text-warning  fs-4"> {{ number_format($book->comments->avg('evaluation'), 1) }} &#9733; <br>
+                    <p class="text-dark text-center opacity-75 fs-5">{{ $book->comments->count() }}</p>
                 </span>
                 <span class="book-divider-line"></span>
-                <span class="text-primary-emphasis fs-4">75 &#9993;<br>
-                    <p class="text-dark opacity-75 fs-5">Отзывы</p>
+                <span class="text-primary-emphasis fs-4">2 &#9993;<br>
+                    <p class="text-dark opacity-75 fs-5">Рецензии</p>
                 </span>
             </div>
             <div class="d-flex mb-3">
@@ -30,7 +30,7 @@
                             <div class="book-block fs-6">Добавить в закладки &#10084;</div>
                         </a>
                     @else
-                        <a href="/bookProduct/bookMarks/{{$book->id}}/delete">
+                        <a href="/bookProduct/bookMarks/{{ $book->id }}/delete">
                             <div class="book-block fs-6">Удалить из закладок &#10084;</div>
                         </a>
                     @endif
@@ -48,37 +48,58 @@
         </div>
     </section>
 
-          <!-- Добавьте секцию для отзывов -->
-          <div class="container-fluid mt-5">
-            <h2 class="fw-bold mb-3">Отзывы</h2>
+    <!-- Добавьте секцию для отзывов -->
+    <div class="container-fluid mt-5">
+        <h2 class="fw-bold mb-3 container">Отзывы</h2>
 
-            @foreach($book->comments as $comment)
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <p class="card-text">{{ $comment->text }}</p>
-                        <p class="card-text">Оценка: {{ $comment->rating }}/5</p>
-                        <p class="card-text">Автор: {{ $comment->user->name }}</p>
-                    </div>
+        @foreach ($book->comments as $comment)
+            <div class="card mb-3 container">
+                <div class="card-body container">
+                    <p class="card-text">{{ $comment->comment_text }}</p>
+                    <p class="card-text">Оценка: {{ $comment->evaluation }}</p>
+                    <p class="card-text">Пользователь: {{ $comment->user->login }}</p>
                 </div>
-            @endforeach
-
-            <!-- Добавьте форму для добавления нового отзыва (если это нужно) -->
-            @auth
-            <div class="container">
-                <form action="" method="post">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="comment-text" class="form-label">Текст отзыва:</label>
-                        <textarea class="form-control" id="comment-text" name="text"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="comment-rating" class="form-label">Оценка:</label>
-                        <input type="number" class="form-control" id="comment-rating" name="rating" min="1" max="5">
-                    </div>
-                    <input type="hidden" name="book_id" value="{{ $book->id }}">
-                    <button type="submit" class="btn btn-primary">Оставить отзыв</button>
-                </form>
             </div>
-            @endauth
-        </div>
+        @endforeach
+
+        <!-- Добавьте форму для добавления нового отзыва (если это нужно) -->
+        @auth
+        @if (isset($comment) && $comment->user_id == Auth::id() && $comment->book_id == $book->id)
+                <div class="container">
+                    <form action="/bookProduct/commentUpdate/{{ $comment->id }}" method="post">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="update-comment-text" class="form-label">Текст отзыва:</label>
+                            <textarea class="form-control" id="update-comment-text" name="comment_text">{{ $comment->comment_text }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="update-comment-rating" class="form-label">Оценка:</label>
+                            <input type="number" class="form-control" id="update-comment-rating" name="evaluation"
+                                min="1" max="5" value="{{ $comment->evaluation }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Обновить отзыв</button>
+                    </form>
+                </div>
+            @else
+                <div class="container">
+                    <form action="/bookProduct/commentCreate" method="post">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="comment-text" class="form-label">Текст отзыва:</label>
+                            <textarea class="form-control" id="comment-text" name="comment_text"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="comment-rating" class="form-label">Оценка:</label>
+                            <input type="number" class="form-control" id="comment-rating" name="evaluation" min="1"
+                                max="5">
+                        </div>
+                        <input type="hidden" name="book_id" value="{{ $book->id }}">
+                        <button type="submit" class="btn btn-primary">Оставить отзыв</button>
+                    </form>
+                </div>
+            @endif
+            
+
+        @endauth
+    </div>
 @endsection
