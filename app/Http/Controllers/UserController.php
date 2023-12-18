@@ -40,7 +40,7 @@ class UserController extends Controller
             "role_id"=>"2"
         ]);
         Auth::login($login);
-        return redirect ("/accountUser")->with("success",  "");
+        return redirect ("/account")->with("success",  "");
     }
 
     public function logIn(Request $request){
@@ -56,10 +56,10 @@ class UserController extends Controller
     
             switch ($role_id) {
                 case 1:
-                    // Редирект для пользователя с ролью 1 (например, администратора)
+                    // Редирект для пользователя с ролью 1 (Сотрудника)
                     return redirect("/")->with("success", "");
                 case 2:
-                    // Редирект для пользователя с ролью 2 (например, обычного пользователя)
+                    // Редирект для пользователя с ролью 2 (Клиента)
                     return redirect("/account")->with("success", "");
             }
         }
