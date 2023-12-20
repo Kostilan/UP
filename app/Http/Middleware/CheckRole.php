@@ -15,7 +15,11 @@ class CheckRole
      */
     public function handle($request, Closure $next, $role)
     {
-       
+         // Проверка аутентификации пользователя
+    if (!auth()->check()) {
+        return $next($request);
+    }
+
         // Проверка роли пользователя
         if (!auth()->check() && !auth()->user()->hasRole($role)) {
             abort(403, 'Недостаточно прав.');

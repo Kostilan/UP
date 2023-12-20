@@ -33,16 +33,16 @@
             <a class="nav-link active" href="/admin">Книги</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="">Авторы</a>
+            <a class="nav-link active" href="/admin/authors">Авторы</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="">Жанры</a>
+            <a class="nav-link active" aria-current="page" href="/admin/genres">Жанры</a>
           </li>
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="">Категории</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="">Издательства</a>
+            <a class="nav-link active" aria-current="page" href="/admin/publications">Издательства</a>
           </li>
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/signout">Выход</a>

@@ -10,11 +10,12 @@ use App\Models\Book;
 class Publication extends Model
 {
     protected $fillable = [
-        'surname_author',
-        'name_author',
+        'title_publications',
     ];
 
     public function book(){
         $this->hasMany(Book::class);
     }
+    public $timestamps = false;
+
 }

@@ -12,5 +12,6 @@ class BookCategory extends Model
         'name_author',
     ];
 
+    public $timestamps = false;
     
 }

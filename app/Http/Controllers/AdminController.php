@@ -8,13 +8,54 @@ use App\Models\Book;
 use App\Models\Genre;
 use App\Models\BookCategory;
 use App\Models\Publication;
+use App\Models\Author;
 
 
 class AdminController extends Controller
 {
-    public function books(){
-        
+    public function admin(){
+        $books = Book::paginate(6);
+        return view('admin.books', ["books"=>$books,]);
+    }
 
-        return view('books');
+// Издательства
+    public function publications(){
+        $publications = Publication::all();
+        return view('admin.publications', compact('publications'));
+    }
+
+    public function publicationsCreate(){
+        return view('admin.publicationCreate');
+    }
+    public function publicationsUpdate($id){
+        $publication = Publication::find($id);
+        return view('admin.publicationsUpdate', compact('publication'));
+    }
+
+    // Авторы
+    public function authors(){
+        $authors = Author::all();
+        return view('admin.authors', compact('authors'));
+    }
+    public function authorsCreate(){
+        return view('admin.authorCreate');
+    }
+    public function authorsUpdate($id){
+        $author = Author::find($id);
+        return view('admin.authorUpdate', compact('author'));
+    }
+
+    // Жанры
+    // Авторы
+    public function genres(){
+        $genres = Genre::all();
+        return view('admin.genres', compact('genres'));
+    }
+    public function genresCreate(){
+        return view('admin.genreCreate');
+    }
+    public function genresUpdate($id){
+        $genre = Genre::find($id);
+        return view('admin.genreUpdate', compact('genre'));
     }
 }

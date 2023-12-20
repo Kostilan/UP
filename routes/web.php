@@ -21,20 +21,43 @@ Route::post('/logIn', [UserController::class, 'logIn'])->name("logIn");
 Route::get('/signout', [UserController::class, 'signout'])->name("signout");
 
 Route::middleware('checkRole:2')->group(function () {
-Route::post('/bookProduct/commentCreate', [CommentController::class, 'commentCreate'])->name("commentCreate");
-Route::post('/bookProduct/commentUpdate/{id}', [CommentController::class, 'commentUpdate'])->name("commentUpdate");
+    Route::post('/bookProduct/commentCreate', [CommentController::class, 'commentCreate'])->name("commentCreate");
+    Route::post('/bookProduct/commentUpdate/{id}', [CommentController::class, 'commentUpdate'])->name("commentUpdate");
+    Route::get('/account', [UserController::class, 'account'])->name("account");
+    Route::get('/account/accountUser', [UserController::class, 'accountUser'])->name("accountUser");
+    Route::post('/account/accountUserUpdate', [UserController::class, 'accountUserUpdate'])->name("accountUserUpdate");
+    Route::get('/account/accountBookMarks', [UserController::class, 'accountBookMarks'])->name("accountBookMarks");
 
+    Route::get('/subscriptions', [SubscriptionController::class, 'subscriptions'])->name("subscriptions");
+    Route::post('/subscriptions/subscriptionCreate', [SubscriptionController::class, 'subscriptionCreate'])->name("subscriptionCreate");
 
-Route::get('/account', [UserController::class, 'account'])->name("account");
-Route::get('/account/accountUser', [UserController::class, 'accountUser'])->name("accountUser");
-Route::post('/account/accountUserUpdate', [UserController::class, 'accountUserUpdate'])->name("accountUserUpdate");
-Route::get('/account/accountBookMarks', [UserController::class, 'accountBookMarks'])->name("accountBookMarks");
 }); 
 
 // Admin
 Route::middleware('checkRole:1')->group(function () {
-Route::get('/admin', [AdminController::class, 'index'])->name("/");
-Route::get('/', [AdminController::class, 'index'])->name("/");
-Route::get('/', [AdminController::class, 'index'])->name("/");
-Route::get('/', [AdminController::class, 'index'])->name("/");
+    Route::get('/admin', [AdminController::class, 'admin'])->name("admin");
+    // Издательства
+    Route::get('/admin/publications', [AdminController::class, 'publications'])->name("publications");
+    Route::get('/admin/publications/publicationsUpdate/{id}', [AdminController::class, 'publicationsUpdate'])->name("publicationsUpdate");
+    Route::get('/admin/publications/publicationsCreate', [AdminController::class, 'publicationsCreate'])->name("publicationsCreate");
+    Route::delete('/admin/publications/publicationDelete/{id}', [BookController::class, 'publicationDelete'])->name('publicationDelete');
+    Route::post('/admin/publications/publicationCreate', [BookController::class, 'publicationCreate'])->name("publicationsCreate");
+    Route::post('/admin/publications/publicationUpdate', [BookController::class, 'publicationUpdate'])->name("publicationUpdate");
+
+    // Авторы
+    Route::get('/admin/authors', [AdminController::class, 'authors'])->name("authors");
+    Route::get('/admin/authors/authorsUpdate/{id}', [AdminController::class, 'authorsUpdate'])->name("authorsUpdate");
+    Route::get('/admin/authors/authorsCreate', [AdminController::class, 'authorsCreate'])->name("authorsCreate");
+    Route::delete('/admin/authors/authorDelete/{id}', [BookController::class, 'authorDelete'])->name('authorDelete');
+    Route::post('/admin/authors/authorCreate', [BookController::class, 'authorCreate'])->name("authorCreate");
+    Route::post('/admin/authors/authorUpdate', [BookController::class, 'authorUpdate'])->name("authorUpdate");
+
+    // Жанры
+    Route::get('/admin/genres', [AdminController::class, 'genres'])->name("genres");
+    Route::get('/admin/genres/genresUpdate/{id}', [AdminController::class, 'genresUpdate'])->name("genresUpdate");
+    Route::get('/admin/genres/genresCreate', [AdminController::class, 'genresCreate'])->name("genresCreate");
+    Route::delete('/admin/genres/genreDelete/{id}', [BookController::class, 'genreDelete'])->name('genreDelete');
+    Route::post('/admin/genres/genreCreate', [BookController::class, 'genreCreate'])->name("genreCreate");
+    Route::post('/admin/genres/genreUpdate', [BookController::class, 'genreUpdate'])->name("genreUpdate");
+
 }); 
