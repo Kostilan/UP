@@ -6,16 +6,24 @@ use Illuminate\Http\Request;
 
 use App\Models\Book;
 use App\Models\Genre;
-use App\Models\BookCategory;
+use App\Models\Category;
 use App\Models\Publication;
 use App\Models\Author;
 
 
 class AdminController extends Controller
 {
+    // Книги
     public function admin(){
         $books = Book::paginate(6);
         return view('admin.books', ["books"=>$books,]);
+    }
+    public function bookCreate(){
+        return view('admin.publicationCreate');
+    }
+    public function bookUpdate($id){
+        $publication = Publication::find($id);
+        return view('admin.publicationsUpdate', compact('publication'));
     }
 
 // Издательства
@@ -46,7 +54,6 @@ class AdminController extends Controller
     }
 
     // Жанры
-    // Авторы
     public function genres(){
         $genres = Genre::all();
         return view('admin.genres', compact('genres'));
@@ -58,4 +65,17 @@ class AdminController extends Controller
         $genre = Genre::find($id);
         return view('admin.genreUpdate', compact('genre'));
     }
+
+        // Категории
+        public function categories(){
+            $categories = Category::all();
+            return view('admin.categories', compact('categories'));
+        }
+        public function categoriesCreate(){
+            return view('admin.categoryCreate');
+        }
+        public function categoriesUpdate($id){
+            $genre = Category::find($id);
+            return view('admin.categoryUpdate', compact('genre'));
+        }
 }

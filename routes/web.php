@@ -60,4 +60,11 @@ Route::middleware('checkRole:1')->group(function () {
     Route::post('/admin/genres/genreCreate', [BookController::class, 'genreCreate'])->name("genreCreate");
     Route::post('/admin/genres/genreUpdate', [BookController::class, 'genreUpdate'])->name("genreUpdate");
 
+     // Категории
+     Route::get('/admin/categories', [AdminController::class, 'categories'])->name("categories");
+     Route::get('/admin/categories/categoriesUpdate/{id}', [AdminController::class, 'categoriesUpdate'])->name("genresUpdate");
+     Route::get('/admin/categories/categoriesCreate', [AdminController::class, 'categoriesCreate'])->name("genresCreate");
+     Route::delete('/admin/categories/categoryDelete/{id}', [BookController::class, 'categoryDelete'])->name('categoryDelete');
+     Route::post('/admin/categories/categoryCreate', [BookController::class, 'categoryCreate'])->name("categoryCreate");
+     Route::post('/admin/categories/categoryUpdate', [BookController::class, 'categoryUpdate'])->name("categoryUpdate");
 }); 

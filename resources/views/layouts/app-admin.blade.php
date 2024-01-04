@@ -39,7 +39,7 @@
             <a class="nav-link active" aria-current="page" href="/admin/genres">Жанры</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="">Категории</a>
+            <a class="nav-link active" aria-current="page" href="/admin/categories">Категории</a>
           </li>
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/admin/publications">Издательства</a>

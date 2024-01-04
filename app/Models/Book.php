@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Author;
 use App\Models\Genre;
 use App\Models\Publication;
-use App\Models\BookCategory;
+use App\Models\Category;
 use App\Models\Review;
 use App\Models\Comment;
 
@@ -32,7 +32,7 @@ class Book extends Model
         return $this->belongsToMany(Genre::class);
     }
     public function category(){
-        return $this->belongsToMnay(BookCategory::class);
+        return $this->belongsToMnay(Category::class);
     }
     public function publication(){
         return $this->belongsTo(Publication::class);

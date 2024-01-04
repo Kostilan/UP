@@ -1,9 +1,9 @@
 @extends('layouts.app-admin')
 
-@section('title', 'Страница создания жанров')
+@section('title', 'Страница создания категорий')
 
 @section('content')
-    <h2>Создание жанров</h2>
+    <h2>Создание категории</h2>
     <div class="container">
         @if (session('error'))
             <div class="alert alert-success mt-2">{{ session('error') }}</div>
@@ -11,19 +11,19 @@
         @if (session('success'))
             <div class="alert alert-success mt-2">{{ session('success') }}</div>
         @endif
-        <form action="/admin/genres/genreCreate" method="POST">
+        <form action="/admin/categories/categoryCreate" method="POST">
             @csrf
             <div class="mb-3">
-                <label for="title_genre" class="form-label">Название жанра</label>
-                <input type="text" class="form-control" id="" name="title_genre">
-                @error('title_genre')
+                <label for="title_category" class="form-label">Название категории</label>
+                <input type="text" class="form-control" id="" name="title_category">
+                @error('title_category')
                     <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
             <div class="mb-3">
-                <label for="description_genre" class="form-label">Описание жанра</label>
-                <textarea type="text" class="form-control" id="" name="description_genre"></textarea>
-                @error('description_genre')
+                <label for="description_category" class="form-label">Описание категории</label>
+                <textarea type="text" class="form-control" id="" name="description_category"></textarea>
+                @error('description_category')
                     <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
