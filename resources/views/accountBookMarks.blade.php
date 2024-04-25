@@ -5,7 +5,7 @@
               @foreach ($chunkedBooks as $book)
                   <div class="book">
                       <a href="{{ url('bookProduct', $book->id) }}">
-                          <img class="main-book-img" src="{{ $book->photo}}" alt="{{ $book->title_book }}">
+                          <img class="main-book-img" src="{{ asset('storage/photo/' . $book->photo) }}" alt="{{ $book->title_book }}">
                       </a>
                       <a class="link-dark link-underline-opacity-0" href="{{ url('bookProduct', $book->id) }}">
                           <p>{{ $book->title_book }}</p>

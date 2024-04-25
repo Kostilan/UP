@@ -1,10 +1,11 @@
-@extends('layouts.app-admin')
+@extends('layouts.app')
 
 @section('title', 'Страница редактирование жанров')
 
 @section('content')
-    <h2>Редактирование жанров</h2>
+   
     <div class="container">
+        <h2>Редактирование жанров</h2>
         @if (session('error'))
             <div class="alert alert-success mt-2">{{ session('error') }}</div>
         @endif
@@ -14,16 +15,16 @@
         <form action="/admin/genres/genreUpdate" method="POST">
             @csrf
             <input type="hidden" value="{{$genre->id}}" name="idGenre">
-            <div class="mb-3">
+            <div class="form-div">
                 <label for="title_genre" class="form-label">Название жанра</label>
-                <input type="text" class="form-control" id="" name="title_genre"  value="{{$genre->title_genre}}">
+                <input type="text" class="form-input" id="" name="title_genre"  value="{{$genre->title_genre}}">
                 @error('title_genre')
                     <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="mb-3">
+            <div class="form-div">
                 <label for="description_genre" class="form-label">Описание жанра</label>
-                <textarea type="text" class="form-control" id="" name="description_genre">{{$genre->description_genre}}</textarea>
+                <textarea type="text" class="form-input" id="" name="description_genre">{{$genre->description_genre}}</textarea>
                 @error('description_genre')
                     <div class="text-danger">{{ $message }}</div>
                 @enderror

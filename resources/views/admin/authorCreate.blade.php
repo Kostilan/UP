@@ -1,10 +1,11 @@
-@extends('layouts.app-admin')
+@extends('layouts.app')
 
 @section('title', 'Страница создания авторов')
 
 @section('content')
-    <h2>Создание авторов</h2>
     <div class="container">
+        <h2>Создание авторов</h2>
+
         @if (session('error'))
             <div class="alert alert-success mt-2">{{ session('error') }}</div>
         @endif
@@ -13,16 +14,16 @@
         @endif
         <form action="/admin/authors/authorCreate" method="POST">
             @csrf
-            <div class="mb-3">
+            <div class="form-div">
                 <label for="surname_author" class="form-label">Фамилия</label>
-                <input type="text" class="form-control" id="" name="surname_author">
+                <input type="text" class="form-input" id="" name="surname_author">
                 @error('surname_author')
                     <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="mb-3">
+            <div class="form-div">
                 <label for="name_author" class="form-label">Имя</label>
-                <input type="text" class="form-control" id="" name="name_author">
+                <input type="text" class="form-input" id="" name="name_author">
                 @error('name_author')
                     <div class="text-danger">{{ $message }}</div>
                 @enderror

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Book;
+use App\Models\LinkBookGenre;
 
 class Genre extends Model
 {
@@ -14,8 +15,9 @@ class Genre extends Model
         'description_genre',
     ];
     
-    public function book(){
-        return $this->belongsToMany(Book::class);
+    public function books()
+    {
+        return $this->belongsToMany(Book::class, 'link_book_genre', 'genre_id', 'book_id');
     }
     public $timestamps = false;
 

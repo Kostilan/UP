@@ -8,34 +8,43 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CommentController;
 
 // general
-Route::get('/', [BookController::class, 'index'])->name("/");
+Route::get('/', [BookController::class, 'index'])->name("index");
 Route::get('/newBooks', [BookController::class, 'newBooks'])->name("newBooks");
 Route::get('/popularBooks', [BookController::class, 'popularBooks'])->name("popularBooks");
+Route::get('/genreBooks/{id}', [BookController::class, 'genreBooks'])->name("genreBooks");
+Route::get('/authorsBooks/{id}', [BookController::class, 'authorsBooks'])->name("authorsBooks");
 Route::get('/bookProduct/{id}', [BookController::class, 'bookProduct'])->name("bookProduct");
-Route::get('/bookProduct/bookMarks/{id}', [BookController::class, 'bookMarksCreate'])->name("bookMarksCreate"); 
-Route::get('/bookProduct/bookMarks/{id}/delete', [BookController::class, 'bookMarksDelete'])->name("bookMarksDelete");
+Route::get('/bookProduct/readDocument/{filename}', [BookController::class,'readDocument'] )->name('readDocument')->middleware('auth');
+Route::get('/bookProduct/bookMarks/{id}', [BookController::class, 'bookMarksCreate'])->name("bookMarksCreate")->middleware('auth'); 
+Route::get('/bookProduct/bookMarks/{id}/delete', [BookController::class, 'bookMarksDelete'])->name("bookMarksDelete")->middleware('auth');
 
 // user
 Route::post('/signUp', [UserController::class, 'signUp'])->name("signUp");
 Route::post('/logIn', [UserController::class, 'logIn'])->name("logIn");
 Route::get('/signout', [UserController::class, 'signout'])->name("signout");
 
-Route::middleware('checkRole:2')->group(function () {
-    Route::post('/bookProduct/commentCreate', [CommentController::class, 'commentCreate'])->name("commentCreate");
-    Route::post('/bookProduct/commentUpdate/{id}', [CommentController::class, 'commentUpdate'])->name("commentUpdate");
-    Route::get('/account', [UserController::class, 'account'])->name("account");
-    Route::get('/account/accountUser', [UserController::class, 'accountUser'])->name("accountUser");
-    Route::post('/account/accountUserUpdate', [UserController::class, 'accountUserUpdate'])->name("accountUserUpdate");
-    Route::get('/account/accountBookMarks', [UserController::class, 'accountBookMarks'])->name("accountBookMarks");
+    Route::post('/bookProduct/commentCreate', [CommentController::class, 'commentCreate'])->name("commentCreate")->middleware('auth');
+    Route::post('/bookProduct/commentUpdate/{id}', [CommentController::class, 'commentUpdate'])->name("commentUpdate")->middleware('auth');
+    Route::get('/bookProduct/reviewCreate/{id}', [CommentController::class, 'reviewCreate'])->name("reviewCreate")->middleware('auth');
+    Route::post('/bookProduct/reviewCreate_valid', [CommentController::class, 'reviewCreate_valid'])->name("reviewCreate_valid")->middleware('auth');
+    Route::put('/reviews/{id}/update', [CommentController::class, 'reviewUpdate_valid'])->name('reviewUpdate_valid')->middleware('auth');
+    Route::get('/account', [UserController::class, 'account'])->name("account")->middleware('auth');
+    Route::get('/account/accountUser', [UserController::class, 'accountUser'])->name("accountUser")->middleware('auth');
+    Route::post('/account/accountUserUpdate', [UserController::class, 'accountUserUpdate'])->name("accountUserUpdate")->middleware('auth');
+    Route::get('/account/accountBookMarks', [UserController::class, 'accountBookMarks'])->name("accountBookMarks")->middleware('auth');
 
-    Route::get('/subscriptions', [SubscriptionController::class, 'subscriptions'])->name("subscriptions");
-    Route::post('/subscriptions/subscriptionCreate', [SubscriptionController::class, 'subscriptionCreate'])->name("subscriptionCreate");
-
-}); 
+    Route::get('/subscriptions', [SubscriptionController::class, 'subscriptions'])->name("subscriptions")->middleware('auth');
+    Route::post('/subscriptions/subscriptionCreate', [SubscriptionController::class, 'subscriptionCreate'])->name("subscriptionCreate")->middleware('auth');
 
 // Admin
-Route::middleware('checkRole:1')->group(function () {
+Route::middleware('CheckRole:1')->group(function () {
     Route::get('/admin', [AdminController::class, 'admin'])->name("admin");
+    Route::get('/admin/bookCreate', [AdminController::class, 'bookCreate'])->name("bookCreate");
+    Route::post('/admin/bookCreaten', [AdminController::class, 'bookCreate_valid'])->name("bookCreate_valid");
+    Route::get('/admin/bookUpdate/{id}', [AdminController::class, 'bookUpdate'])->name("bookUpdate");
+    Route::post('/admin/bookUpdaten/{id}', [AdminController::class, 'bookUpdatemin_valid'])->name("bookUpdatemin_valid");
+    Route::get('/admin/books/delete/{ $id}', [AdminController::class, 'bookDelete'])->name("bookDelete");
+
     // Издательства
     Route::get('/admin/publications', [AdminController::class, 'publications'])->name("publications");
     Route::get('/admin/publications/publicationsUpdate/{id}', [AdminController::class, 'publicationsUpdate'])->name("publicationsUpdate");

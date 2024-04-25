@@ -1,10 +1,10 @@
-    @extends('layouts.app-admin')
+    @extends('layouts.app')
 
     @section('title', 'Страница категорий')
 
     @section('content')
-        <h2>Список категорий</h2>
         <div class="container">
+            <h2>Список категорий</h2>
             @if (session('error'))
                 <div class="alert alert-success mt-2">{{ session('error') }}</div>
             @endif
@@ -13,7 +13,7 @@
             @endif
             <a class="btn btn-primary" href="/admin/categories/categoriesCreate">Создать категорию</a>
             {{-- <br> --}}
-            <table class="table">
+            <table class="table container">
                 <thead>
                     <tr>
                         <th>ID</th>

@@ -1,16 +1,16 @@
-@extends('layouts.app-admin')
+@extends('layouts.app')
 
 @section('title', 'Главная страница')
 
 @section('content')
-    <div class="">
+    <div class="container">
         <h2>Список книг</h2>
         <div class="d-flex justify-content-between mb-3">
-            <a class="btn btn-primary" href="/admin/books/create">Создать книгу</a>
+            <a class="btn btn-primary" href="{{route('bookCreate')}}">Создать книгу</a>
            
         </div>
 
-        <table class="table">
+        <table class="table container">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -35,11 +35,12 @@
                             </td>
                             <td>
                                 <a href="{{ url('bookProduct', $book->id) }}">
-                                    <img class="main-book-img" src="{{ $book->photo }}" alt="{{ $book->title_book }}">
+                                    <img class="main-book-img" src="{{ asset('storage/photo/' . $book->photo) }}" alt="{{ $book->title_book }}">
                                 </a>
                             </td>
                             <td>
-                                <a href="/admin/books/edit/{{ $book->id }}" class="btn btn-warning">Редактировать</a>
+                                {{-- <a href="{{route('bookUpdate', ['id' => $book->id])}}" class="btn btn-warning">Редактировать</a> --}}
+                                <a href="{{route('bookUpdate', ['id' => $book->id])}}" class="btn btn-warning">Редактировать</a>
                                 <form action="/admin/books/delete/{{ $book->id }}" method="POST"
                                     style="display: inline;">
                                     @csrf

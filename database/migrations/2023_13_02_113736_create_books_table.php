@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string("title_book",100);
             $table->string("photo",200);
+            $table->string("document",200);
             $table->foreignId("author_id")->constrained("authors");
             $table->foreignId("publication_id")->constrained("publications");
             $table->integer("year_publication");

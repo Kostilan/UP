@@ -3,44 +3,56 @@
 @section('title', 'Страница книги')
 
 @section('content')
-    <section class="d-flex container-fluid book-container">
-        <img src="{{ $book->photo }}" alt="Книга">
+    <section class="book-container">
+        <img src="{{ asset('storage/photo/' . $book->photo) }}" alt="Книга">
         <div class="container-fluid">
             <p class="book-text-name">
                 {{ $book->title_book }}
             </p>
-            <p class="fw-bold">Автор: <a href="">{{ $book->author->surname_author }}
+            <p class="">Автор: <a href="{{ route('authorsBooks', ['id' => $book->author->id]) }}">{{ $book->author->surname_author }}
                     {{ $book->author->name_author }}</a></p>
-            <div class="d-flex">
-                <span class="text-warning  fs-4"> {{ number_format($book->comments->avg('evaluation'), 1) }} &#9733; <br>
+            <div class="book-container">
+                <span class="book-evaluation"> {{ number_format($book->comments->avg('evaluation'), 1) }} &#9733; <br>
                     <p class="text-dark text-center opacity-75 fs-5">{{ $book->comments->count() }}</p>
                 </span>
                 <span class="book-divider-line"></span>
-                <span class="text-primary-emphasis fs-4">2 &#9993;<br>
+                <span class="text-primary-emphasis fs-4">{{ count($book->review) }} &#9993; <a
+                        href="{{ route('reviewCreate', ['id' => $book->id]) }}">+</a><br>
                     <p class="text-dark opacity-75 fs-5">Рецензии</p>
+
                 </span>
             </div>
-            <div class="d-flex mb-3">
+            <div class="">
                 @auth
-                    <a href="">
-                        <div class="book-block fs-6 me-3">Читать фрагмент</div>
-                    </a>
-                    @if (!$isBookMark)
-                        <a href="/bookProduct/bookMarks/{{ $book->id }}">
-                            <div class="book-block fs-6">Добавить в закладки &#10084;</div>
+                    @if ($subscriptions)
+                        <a href="{{ route('readDocument', ['filename' => $book->document]) }}">
+                            <div class="book-block fs-6 me-3">Читать полностью</div>
                         </a>
                     @else
-                        <a href="/bookProduct/bookMarks/{{ $book->id }}/delete">
-                            <div class="book-block fs-6">Удалить из закладок &#10084;</div>
+                        <a href="{{ route('readDocument', ['filename' => $book->document]) }}">
+                            <div class="book-block fs-6 me-3">Читать фрагмент</div>
                         </a>
-                    @endif
+                        @endif
+                        @if (!$isBookMark)
+                            <a href="/bookProduct/bookMarks/{{ $book->id }}">
+                                <div class="book-block fs-6">Добавить в закладки &#10084;</div>
+                            </a>
+                        @else
+                            <a href="/bookProduct/bookMarks/{{ $book->id }}/delete">
+                                <div class="book-block fs-6">Удалить из закладок &#10084;</div>
+                            </a>
+                        @endif
                 </div>
             @endauth
-            <section class="d-flex">
-                <p class="fw-bold">Объем: </p>
-                <p> {{ $book->pages }} стр.</p>
+            <section class="">
+
+                <p>Объем: {{ $book->pages }} стр.</p>
             </section>
-            <p class="fw-bold">Жанры: <a href=""> Фантастика</a>, <a href="">Детективы</a></p>
+            <p class="fw-bold">Жанры: @foreach ($genres as $item)
+                    <a class="link-dark"
+                        href="{{ route('genreBooks', ['id' => $item->id]) }}">{{ $item->title_genre }}</a>
+                @endforeach
+            </p>
             <section class=" w-75">
                 <span class="fw-bold fs-6">Описание книги: </span>
                 <p>{{ $book->description }}</p>
@@ -48,57 +60,68 @@
         </div>
     </section>
 
-    <!-- Добавьте секцию для отзывов -->
-    <div class="container-fluid mt-5">
-        <h2 class="fw-bold mb-3 container">Отзывы</h2>
-
+    <h2 class="comment-title">Отзывы</h2>
+    <div class="">
         @foreach ($book->comments as $comment)
-            <div class="card mb-3 container">
-                <div class="card-body container">
-                    <p class="card-text">{{ $comment->comment_text }}</p>
-                    <p class="card-text">Оценка: {{ $comment->evaluation }}</p>
-                    <p class="card-text">Пользователь: {{ $comment->user->login }}</p>
-                </div>
+            <div class="comment-container">
+                <p class="comment-text">{{ $comment->comment_text }}</p>
+                <p class="comment-text">Оценка: {{ $comment->evaluation }}</p>
+                <p class="comment-text">Пользователь: {{ $comment->user->login }}</p>
             </div>
         @endforeach
 
-        <!-- Добавьте форму для добавления нового отзыва (если это нужно) -->
+
         @auth
-        @if (isset($comment) && $comment->user_id == Auth::id() && $comment->book_id == $book->id)
-                <div class="container">
+            @if (isset($comment) && $comment->user_id == Auth::id() && $comment->book_id == $book->id)
+                <div class="comment-form">
+                    <h3 class="">Обновить комментарий</h3>
+
                     <form action="/bookProduct/commentUpdate/{{ $comment->id }}" method="post">
                         @csrf
-                        <div class="mb-3">
+                        <div class="form-div">
                             <label for="update-comment-text" class="form-label">Текст отзыва:</label>
-                            <textarea class="form-control" id="update-comment-text" name="comment_text">{{ $comment->comment_text }}</textarea>
+                            <textarea class="form-input" id="update-comment-text" name="comment_text">{{ $comment->comment_text }}</textarea>
+                            @error('comment_text')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="mb-3">
+                        <div class="form-div">
                             <label for="update-comment-rating" class="form-label">Оценка:</label>
-                            <input type="number" class="form-control" id="update-comment-rating" name="evaluation"
-                                min="1" max="5" value="{{ $comment->evaluation }}">
+                            <input type="number" class="form-input" id="update-comment-rating" name="evaluation" min="1"
+                                max="5" value="{{ $comment->evaluation }}">
+                            @error('evaluation')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                         <button type="submit" class="btn btn-primary">Обновить отзыв</button>
                     </form>
                 </div>
             @else
-                <div class="container">
+                <div class="comment-form">
+                    <h3 class="">Добавить комментарий</h3>
                     <form action="/bookProduct/commentCreate" method="post">
                         @csrf
-                        <div class="mb-3">
+                        <div class="form-div">
                             <label for="comment-text" class="form-label">Текст отзыва:</label>
-                            <textarea class="form-control" id="comment-text" name="comment_text"></textarea>
+                            <textarea class="form-input" id="comment-text" name="comment_text"></textarea>
+                            @error('comment_text')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="mb-3">
+                        <div class="form-div">
                             <label for="comment-rating" class="form-label">Оценка:</label>
-                            <input type="number" class="form-control" id="comment-rating" name="evaluation" min="1"
+                            <input type="number" class="form-input" id="comment-rating" name="evaluation" min="1"
                                 max="5">
+                            @error('evaluation')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                         <input type="hidden" name="book_id" value="{{ $book->id }}">
                         <button type="submit" class="btn btn-primary">Оставить отзыв</button>
                     </form>
                 </div>
             @endif
-            
+
 
         @endauth
     </div>

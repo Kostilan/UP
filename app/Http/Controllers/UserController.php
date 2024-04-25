@@ -35,7 +35,7 @@ class UserController extends Controller
                 'password_repeat.same' => 'Пароль и повтор пароля должны совпадать.',
                 'email.required' => 'Поле "Почта" обязательно для заполнения.',
                 'email.email' => 'Почта должна быть валидным адресом электронной почты.',
-                'email.unique' => 'Пользователь с такой почтой уже существует.',
+                'email.unique' =>    'Пользователь с такой почтой уже существует.',
                 'birthday.required' => 'Поле "Дата рождения" обязательно для заполнения.',
                 'phone.required' => 'Поле "Телефон" обязательно для заполнения.',
                 'phone.min' => 'Телефон должен содержать минимум 11 цифр.',
@@ -136,7 +136,7 @@ class UserController extends Controller
         if($user->phone != $request['phone']) $user->phone = $request['phone'];
         
         $user->save();
-        return redirect('/accountUser');
+        return redirect()->back()->with('success','Вы успешно обновили свои данные');
     }
 
     public function signout(){

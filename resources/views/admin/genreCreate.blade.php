@@ -1,10 +1,11 @@
-@extends('layouts.app-admin')
+@extends('layouts.app')
 
 @section('title', 'Страница создания жанров')
 
 @section('content')
-    <h2>Создание жанров</h2>
     <div class="container">
+    <h2>Создание жанров</h2>
+
         @if (session('error'))
             <div class="alert alert-success mt-2">{{ session('error') }}</div>
         @endif
@@ -13,16 +14,16 @@
         @endif
         <form action="/admin/genres/genreCreate" method="POST">
             @csrf
-            <div class="mb-3">
+            <div class="form-div">
                 <label for="title_genre" class="form-label">Название жанра</label>
-                <input type="text" class="form-control" id="" name="title_genre">
+                <input type="text" class="form-input" id="" name="title_genre">
                 @error('title_genre')
                     <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="mb-3">
+            <div class="form-div">
                 <label for="description_genre" class="form-label">Описание жанра</label>
-                <textarea type="text" class="form-control" id="" name="description_genre"></textarea>
+                <textarea type="text" class="form-input" id="" name="description_genre"></textarea>
                 @error('description_genre')
                     <div class="text-danger">{{ $message }}</div>
                 @enderror

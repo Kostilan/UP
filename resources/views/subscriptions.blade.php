@@ -4,11 +4,19 @@
 
 @section('content')
     <div class="container">
-        <h2>Выберите тип подписки:</h2>
+        {{-- @if (session('subscription_success'))
+            <div class="alert alert-success mt-2">{{ session('subscription_success') }}</div>
+        @endif --}}
+        @if (session('subscription_success'))
+            <div class="">{{ session('subscription_success') }}</div>
+        @endif
+       @if(count($subscription) > 0)
+        <p>Вы уже приобрели подписку, у вас осталось - 30 дней</p>
+        @else
+                <h2>Выберите тип подписки:</h2>
 
         <form action="/subscriptions/subscriptionCreate" method="post">
             @csrf
-
             @foreach ($typeSubscriptions as $typeSubscription)
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="subscription_type" id="type{{ $typeSubscription->id }}"
@@ -26,8 +34,6 @@
             <button type="submit" class="btn btn-primary mt-3">Подписаться</button>
         </form>
 
-        @if (session('subscription_success'))
-            <div class="alert alert-success mt-2">{{ session('subscription_success') }}</div>
         @endif
     </div>
 @endsection

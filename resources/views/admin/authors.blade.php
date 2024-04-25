@@ -1,19 +1,20 @@
-@extends('layouts.app-admin')
+@extends('layouts.app')
 
 @section('title', 'Страница авторов')
 
 @section('content')
-    <h2>Список авторов</h2>
     <div class="container">
+        <h2>Список авторов</h2>
+
         @if (session('error'))
             <div class="alert alert-success mt-2">{{ session('error') }}</div>
         @endif
         @if (session('success'))
-        <div class="alert alert-success mt-2">{{ session('success') }}</div>
-    @endif
-    <a class="btn btn-primary" href="/admin/authors/authorsCreate">Создать авторов</a>
-    {{-- <br> --}}
-        <table class="table">
+            <div class="alert alert-success mt-2">{{ session('success') }}</div>
+        @endif
+        <a class="btn btn-primary" href="/admin/authors/authorsCreate">Создать авторов</a>
+        {{-- <br> --}}
+        <table class="table container">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -27,7 +28,8 @@
                         <td>{{ $author->id }}</td>
                         <td>{{ $author->surname_author }} {{ $author->name_author }}</td>
                         <td>
-                            <a href="/admin/authors/authorsUpdate/{{ $author->id }}" class="btn btn-warning link-light">Редактировать</a>
+                            <a href="/admin/authors/authorsUpdate/{{ $author->id }}"
+                                class="btn btn-warning link-light">Редактировать</a>
                             <form action="/admin/authors/authorDelete/{{ $author->id }}" method="POST"
                                 style="display: inline;">
                                 @csrf

@@ -11,14 +11,16 @@ use App\Models\Publication;
 use App\Models\Category;
 use App\Models\Review;
 use App\Models\Comment;
+use App\Models\LinkBookGenre;
 
 class Book extends Model
 {
     protected $fillable = [
         'title_book',
         'photo',
+        'document',
         'author_id',
-        'publication_id ',
+        'publication_id',
         'year_publication',
         'description',
         'auditorium',
@@ -27,9 +29,6 @@ class Book extends Model
 
     public function author(){
         return $this->belongsTo(Author::class);
-    }
-    public function genre(){
-        return $this->belongsToMany(Genre::class);
     }
     public function category(){
         return $this->belongsToMnay(Category::class);
@@ -44,6 +43,11 @@ class Book extends Model
 
     public function review(){
         return $this->hasMany(Review::class);
+    }
+
+    public function genre()
+    {
+        return $this->belongsToMany(Genre::class, 'link_book_genre', 'book_id', 'genre_id');
     }
   
 }

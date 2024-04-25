@@ -14,68 +14,180 @@ use App\Models\Author;
 class AdminController extends Controller
 {
     // Книги
-    public function admin(){
+    public function admin()
+    {
         $books = Book::paginate(6);
-        return view('admin.books', ["books"=>$books,]);
+        return view('admin.books', ["books" => $books,]);
     }
-    public function bookCreate(){
-        return view('admin.publicationCreate');
-    }
-    public function bookUpdate($id){
-        $publication = Publication::find($id);
-        return view('admin.publicationsUpdate', compact('publication'));
+    public function bookDelete($id)
+    {
+        // Найдем книгу по ее идентификатору
+        $book = Book::findOrFail($id);
+
+        // Удалим книгу
+        $book->delete();
+
+        // Вернемся на страницу, с которой было отправлено запрос на удаление
+        return redirect()->back()->with('success', 'Книга успешно удалена');
     }
 
-// Издательства
-    public function publications(){
+    function bookUpdate($id){
+        $authors = Author::all();
+        $publications = Publication::all();
+        $book = Book::find($id);
+        return view('admin.bookUpdate', compact('book','authors','publications'));
+    }
+    public function bookCreate()
+    {
+        $authors = Author::all();
+        $publications = Publication::all();
+        return view('admin.bookCreate', compact('authors', 'publications'));
+    }
+    function bookCreate_valid(Request $request)
+    {
+        $request->validate([
+            'title_book' => 'required|string|max:100',
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:200',
+            'document' => 'required|mimes:pdf',
+            'author_id' => 'required|exists:authors,id',
+            'publication_id' => 'required|exists:publications,id',
+            'year_publication' => 'required|integer|min:1900|max:' . date('Y'),
+            'description' => 'required|string',
+            'auditorium' => 'required|string',
+            'pages' => 'required|integer|min:1',
+        ]);
+
+        // Сохранение фото
+        $photoPath = $request->file('photo')->store('public/photo');
+
+        // Сохранение документа
+        $documentPath = $request->file('document')->store('public/document');
+
+        Book::create([
+            'title_book' => $request->title_book,
+            'photo' => basename($photoPath),
+            'document' => basename($documentPath),
+            'author_id' => $request->author_id,
+            'publication_id' => $request->publication_id,
+            'year_publication' => $request->year_publication,
+            'description' => $request->description,
+            'auditorium' => $request->auditorium,
+            'pages' => $request->pages,
+        ]);
+
+        return redirect('admin')->with('success', 'Книга успешно создана.');
+    }
+
+    function bookUpdatemin_valid($id, Request $request){
+         // Найдем книгу по ее идентификатору
+         $book = Book::findOrFail($id);
+
+         // Проверим валидность входных данных
+         $request->validate([
+             'title_book' => 'required|string|max:255',
+             'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Максимальный размер изображения 2MB
+             'document' => 'required|mimes:pdf|max:2048', // Максимальный размер PDF файла 2MB
+             'author_id' => 'required|exists:authors,id',
+             'publication_id' => 'required|exists:publications,id',
+             'year_publication' => 'required|integer',
+             'description' => 'required|string',
+             'auditorium' => 'required|string|max:255',
+             'pages' => 'required|integer',
+         ]);
+ 
+         // Обновим данные книги
+         $book->update([
+             'title_book' => $request->title_book,
+             // Другие поля книги
+         ]);
+ 
+         // Если загружено новое изображение, сохраните его
+         if ($request->hasFile('photo')) {
+             $photo = $request->file('photo');
+             $fileName = time() . '_' . $photo->getClientOriginalName();
+             $photo->storeAs('public/photo', $fileName);
+             $book->photo = $fileName;
+             $book->save();
+         }
+ 
+         // Если загружен новый документ PDF, сохраните его
+         if ($request->hasFile('document')) {
+             $document = $request->file('document');
+             $fileName = time() . '_' . $document->getClientOriginalName();
+             $document->storeAs('public/document', $fileName);
+             $book->document = $fileName;
+             $book->save();
+         }
+ 
+         // Вернемся на страницу с информацией о книге
+         return redirect()->route('bookShow', $book->id)->with('success', 'Книга успешно обновлена');
+     }
+    
+ 
+
+
+    // Издательства
+    public function publications()
+    {
         $publications = Publication::all();
         return view('admin.publications', compact('publications'));
     }
 
-    public function publicationsCreate(){
+    public function publicationsCreate()
+    {
         return view('admin.publicationCreate');
     }
-    public function publicationsUpdate($id){
+    public function publicationsUpdate($id)
+    {
         $publication = Publication::find($id);
         return view('admin.publicationsUpdate', compact('publication'));
     }
 
     // Авторы
-    public function authors(){
+    public function authors()
+    {
         $authors = Author::all();
         return view('admin.authors', compact('authors'));
     }
-    public function authorsCreate(){
+    public function authorsCreate()
+    {
         return view('admin.authorCreate');
     }
-    public function authorsUpdate($id){
+    public function authorsUpdate($id)
+    {
         $author = Author::find($id);
         return view('admin.authorUpdate', compact('author'));
     }
 
     // Жанры
-    public function genres(){
+    public function genres()
+    {
         $genres = Genre::all();
         return view('admin.genres', compact('genres'));
     }
-    public function genresCreate(){
+    public function genresCreate()
+    {
         return view('admin.genreCreate');
     }
-    public function genresUpdate($id){
+    public function genresUpdate($id)
+    {
         $genre = Genre::find($id);
         return view('admin.genreUpdate', compact('genre'));
     }
 
-        // Категории
-        public function categories(){
-            $categories = Category::all();
-            return view('admin.categories', compact('categories'));
-        }
-        public function categoriesCreate(){
-            return view('admin.categoryCreate');
-        }
-        public function categoriesUpdate($id){
-            $genre = Category::find($id);
-            return view('admin.categoryUpdate', compact('genre'));
-        }
+    // Категории
+    public function categories()
+    {
+        $categories = Category::all();
+        return view('admin.categories', compact('categories'));
+    }
+    public function categoriesCreate()
+    {
+        return view('admin.categoryCreate');
+    }
+    public function categoriesUpdate($id)
+    {
+        $genre = Category::find($id);
+        return view('admin.categoryUpdate', compact('genre'));
+    }
 }
