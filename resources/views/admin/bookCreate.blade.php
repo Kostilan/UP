@@ -5,7 +5,7 @@
 @section('content')
 
     <div class="container">
-        <h2>Редактирование книги</h2>
+        <h2>Создание книги</h2>
         @if (session('error'))
             <div class="alert alert-danger">
                 {{ session('error') }}

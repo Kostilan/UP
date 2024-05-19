@@ -147,7 +147,7 @@ class UserController extends Controller
     public function accountBookMarks(){
         $bookMarks = Auth::user()->book_marks;
         $bookIds = $bookMarks->pluck('book_id')->toArray();
-        $books =  Book::whereIn('id', $bookIds)->paginate(9);;
+        $books =  Book::whereIn('id', $bookIds)->with(['author', 'genres', 'categories'])->paginate(9);
         // $books = Book::paginate(9);
         return view('accountBookMarks', compact('books'));
     }
