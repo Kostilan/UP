@@ -17,12 +17,16 @@
     box-sizing: border-box;
 }
 body {
+    /* background-color: #cceff5; */
     font-family: "Roboto-italic";
     font-weight: 500;
 }
 a {
     text-decoration: none;
     color: black;
+}
+.text-red{
+    color: red;
 }
 a:hover {
     color: #1a53af;
@@ -47,16 +51,19 @@ a:focus {
 header {
     font-family: "Roboto-italic";
     font-weight: 500;
-    margin-left: 5%;
-    margin-right: 5%;
+    /* margin-left: 5%; */
+    /* margin-right: 5%; */
     display: flex;
     justify-content: space-around;
     align-items: center;
-    background-color: #e6f1eb;
+    /* background-color: #c6d5d6; */
     margin-bottom: 10px;
     padding: 2vh 1vw;
     /* padding-left: 1vw;
    padding-right: 1vw; */
+}
+.logo {
+    width: 25%;
 }
 .nav-list {
     display: flex;
@@ -94,6 +101,15 @@ header {
 }
 .container-flex {
     display: flex;
+    justify-content: space-between;
+    /* pad */
+}
+.container-select {
+    display: flex;
+    gap: 100px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
 }
 /* Форма */
 .text_error {
@@ -132,6 +148,16 @@ header {
     border-radius: 8%;
     box-sizing: border-box;
 }
+
+.form-account {
+    /* max-width: 20%; */
+    width: 100%;
+    margin: 0 auto;
+    padding: 0.5%;
+    border: 1px solid #ccc;
+    border-radius: 8%;
+    box-sizing: border-box;
+}
 .form-select {
     max-width: 15%;
     width: 100%;
@@ -155,6 +181,39 @@ header {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.btn-admin {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #37c5d8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+}
+.btn-admin_category {
+    position: fixed;
+    right: 20px;
+    background-color: #37c5d8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-primary {
+    display: inline-block;
+    margin-top: 10px; /* Отступ между текстом и кнопкой */
+    padding: 8px 16px; /* Поля кнопки */
+    background-color: #37c5d8;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
 }
 .btn-like {
     max-width: 5vh;
@@ -233,14 +292,34 @@ header {
 
 /* Каталог книг */
 .genre {
+    /* width: 5%; */
+}
+.genre-right {
+    text-align: right;
+    margin-right: 5%;
+}
+
+.genre-left {
     margin-left: 5%;
+    text-align: left;
 }
 .genre-list {
     list-style: none;
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(200px, 1fr)
+    ); /* Задаем автоматические столбцы с минимальной шириной 200px */
+}
+
+.genre-list li {
+    border: 1px solid #ccc; /* Добавляем рамку для каждого элемента списка */
+    padding: 10px; /* Добавляем отступы вокруг текста */
+    text-align: center; /* Выравниваем текст по центру */
 }
 
 .list-catalog {
-    margin-left: 5%;
+    margin-left: 4%;
     /* margin-bottom: 5% ; */
 }
 
@@ -251,15 +330,28 @@ header {
 }
 .book {
     width: 204px;
-    height: 307.2px;
-    margin-top: 76.8px;
-    margin-bottom: 76.8px;
-    margin-right: 136.6px;
+    height: auto;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-right: 20px;
+}
+
+.book-info {
+    background-color: #fff;
+    padding: 10px;
 }
 
 .main-book-img {
-    width: 204px;
-    height: 200.6px;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.admin-book-img {
+    width: 25vw;
+    /* height: 200px;  */
+    /* object-fit: cover; */
 }
 
 /* Отедльная книга */
@@ -269,6 +361,20 @@ header {
     margin-left: 5%;
     margin-top: 5vh;
     margin-bottom: 5vh;
+}
+
+/* чтение книги */
+.read {
+    font-family: "Roboto-light", sans-serif;
+    font-size: 16px;
+    color: #333;
+    line-height: 1.6;
+    margin: 20px 5%;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: justify;
 }
 .book-container > img {
     height: 428px;
@@ -361,14 +467,17 @@ header {
 
 /* Подписка */
 .form-check {
-    margin-bottom: 10px; 
+    margin-bottom: 10px;
 }
 
 .form-check-label {
-    margin-left: 5px; 
+    margin-left: 5px;
 }
 
 /* Пагинация */
+. {
+    margin-top: 2%;
+}
 nav[role="navigation"] {
     display: flex;
     justify-content: center;
@@ -411,8 +520,11 @@ ul.flex li a:hover {
 
 /* Подвал */
 footer {
-    margin-left: 5%;
-    margin-top: 5%;
+    margin-top:5%;
+    margin-bottom:2%;
+    margin-left: 2%;
+    bottom: 0;
+
 }
 
 /* Админка */
@@ -422,15 +534,3 @@ footer {
 .btn-warning {
     background-color: yellow;
 }
-
-/* .pagination{
-    width: 1%;
-    height: 1%;
-} */
-
-/* Черновик
-
-Логотип придумать картинка или текстом на диплом
-Написание рецензий - кнопку добавить (плюсик к кол-ву рецензий)
-Добавить вых документ - книгу
-*/

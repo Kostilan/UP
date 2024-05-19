@@ -12,7 +12,7 @@
         @if (session('success'))
             <div class="alert alert-success mt-2">{{ session('success') }}</div>
         @endif
-        <a class="btn btn-primary" href="/admin/authors/authorsCreate">Создать авторов</a>
+        <a class="btn btn-admin_category" href="/admin/authors/authorsCreate">Создать авторов</a>
         {{-- <br> --}}
         <table class="table container">
             <thead>
@@ -42,5 +42,8 @@
                 @endforeach
             </tbody>
         </table>
+        <div class="pagination">
+            {{ $authors->links('vendor.pagination.custom') }}
+        </div>
     </div>
 @endsection

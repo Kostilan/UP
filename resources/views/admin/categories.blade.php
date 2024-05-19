@@ -11,7 +11,7 @@
             @if (session('success'))
                 <div class="alert alert-success mt-2">{{ session('success') }}</div>
             @endif
-            <a class="btn btn-primary" href="/admin/categories/categoriesCreate">Создать категорию</a>
+            <a class="btn btn-admin_category" href="/admin/categories/categoriesCreate">Создать категорию</a>
             {{-- <br> --}}
             <table class="table container">
                 <thead>
@@ -41,5 +41,8 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="pagination">
+                {{ $categories->links('vendor.pagination.custom') }}
+            </div>
         </div>
     @endsection

@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use TCPDF;
 // use Spatie\PdfToText\Pdf;
-use Spatie\PdfToImage\Pdf;
-use App\Jobs\ProcessPdfConversion; // Новая задача для обработки PDF
+// use Spatie\PdfToImage\Pdf;
+use App\Jobs\ProcessPdfConversion;
 
 
 use Illuminate\Http\Request;
@@ -18,23 +18,55 @@ use App\Models\LinkBookGenre;
 use App\Models\Publication;
 use App\Models\Author;
 use App\Models\Category;
+use App\Models\LinkBookCategory;
 use App\Models\Subscription;
 use Illuminate\Support\Facades\DB;
+// use PDF;
+use setasign\Fpdi\Fpdi;
+use setasign\Fpdi\Fpdf;
+use Smalot\PdfParser\Parser;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class BookController extends Controller
 {
+    // public function viewPdf($id)
+    // {
+    //     $book = Book::findOrFail($id);
+    //     $pdfPath = storage_path('app/public/document/' . $book->document);
+
+    //     // Создаем объект парсера PDF
+    //     $parser = new Parser();
+    //     // Получаем объект PDF
+    //     $pdf = $parser->parseFile($pdfPath);
+
+    //     // Извлекаем текст со всех страниц PDF
+    //     $pdfText = '';
+    //     foreach ($pdf->getPages() as $page) {
+    //         $pdfText .= $page->getText();
+    //     }
+
+    //     return view('pdf', compact('pdfText'));
+    // }
+
     public function index()
     {
-        $genre = Genre::all();
-        $books = Book::paginate(6);
-        return view('index', ["books" => $books, "genres" => $genre]);
+        $genres = Genre::all();
+        $categories = Category::all();
+        $books = Book::with(['author', 'genres', 'categories'])->paginate(6);
+    
+        return view('index', [
+            'books' => $books,
+            'genres' => $genres,
+            'categories' => $categories,
+        ]);
     }
 
     public function newBooks()
     {
+        $category = Category::all();
         $genre = Genre::all();
-        $books = Book::orderBy('created_at', 'desc')->paginate(6);
-        return view('index', ["books" => $books, "genres" => $genre]);
+        $books = Book::orderBy('created_at', 'desc')->with(['author', 'genres', 'categories'])->paginate(6);
+        return view('books', ["books" => $books, "genres" => $genre, "categories" => $category]);
     }
 
     public function popularBooks()
@@ -42,41 +74,59 @@ class BookController extends Controller
         $books = Book::leftJoin('comments', 'books.id', '=', 'comments.book_id')
             ->select('books.*', DB::raw('COUNT(comments.id) AS comments_count'))
             ->groupBy('books.id')
-            ->orderBy('comments_count', 'desc')
+            ->orderBy('comments_count', 'desc')->with(['author', 'genres', 'categories'])
             ->paginate(6);
         $genre = Genre::all();
-        return view('index', ['books' => $books, "genres" => $genre]);
+        $category = Category::all();
+        return view('books', ['books' => $books, "genres" => $genre,  "categories" => $category]);
     }
 
     public function genreBooks($id)
     {
+        $categories = Category::all();
         $genres = Genre::all();
-        $books = Genre::findOrFail($id)->books()->paginate(6);
+        $books = Genre::findOrFail($id)->books()->with(['author', 'genres', 'categories'])->paginate(6);
 
-        return view('index', compact('books', 'genres'));
+        return view('books', compact('books', 'genres', 'categories'));
     }
 
-    public function authorsBooks($id){
+    public function categoryBooks($id)
+    {
         $genres = Genre::all();
-        $books = Book::where('author_id',$id)->paginate(6);
-        return view('index', compact('books', 'genres'));
+        $categories = Category::all();
+        $books = Category::findOrFail($id)->books()->with(['author', 'genres', 'categories'])->paginate(6);
+
+        return view('books', compact('books', 'categories', 'genres'));
+    }
+
+    public function authorsBooks($id)
+    {
+        $categories = Category::all();
+        $genres = Genre::all();
+        $books = Book::where('author_id', $id)->with(['author', 'genres', 'categories'])->paginate(6);
+        return view('books', compact('books', 'categories', 'genres'));
     }
 
     public function bookProduct($id)
     {
-        $subscriptions = Subscription::where('user_id',Auth::id())->get();
+        $subscriptions = Subscription::where('user_id', Auth::id())->get();
         $book = Book::find($id);
         $genre_links = LinkBookGenre::where('book_id', $id)->get();
+        $category_links = LinkBookCategory::where('book_id', $id)->get();
         $genres = [];
-    
         foreach ($genre_links as $genre_link) {
             $genre = Genre::find($genre_link->genre_id);
             if ($genre) {
                 $genres[] = $genre;
             }
         }
-    
-        // Проверка аутентификации пользователя
+        $categories = [];
+        foreach ($category_links as $category_link) {
+            $category = Category::find($category_link->category_id);
+            if ($category) {
+                $categories[] = $category;
+            }
+        }
         if (Auth::check()) {
 
             $bookMarks = Auth::user()->book_marks;
@@ -85,7 +135,7 @@ class BookController extends Controller
             foreach ($bookMarks as $key => $value) {
                 if ($value->book_id == $id) {
                     $isBookMark = true;
-                    break; // Прерываю цикл, так как закладка уже найдена
+                    break;
                 }
             }
         }
@@ -95,24 +145,73 @@ class BookController extends Controller
                 'book' => $book,
                 'isBookMark' => (Auth::check() && $isBookMark),
                 'genres' => $genres,
+                'categories' => $categories,
                 'subscriptions' => $subscriptions
             ]
         );
     }
 
-     public function readDocument($filename)
+
+    public function readDocument($filename, Request $request)
     {
         // Получите путь к PDF-файлу из хранилища
         $filePath = storage_path('app/public/document/' . $filename);
-    
+
         // Проверьте существование файла
         if (!file_exists($filePath)) {
             abort(404); // Файл не найден
         }
-    
-        // Возвращаем представление с PDF-файлом
-        return response()->file($filePath);
+
+        // Извлеките текст из PDF-файла
+        $parser = new \Smalot\PdfParser\Parser();
+        $pdf = $parser->parseFile($filePath);
+        $text = $pdf->getText();
+
+        // Очистка и форматирование текста
+        $text = $this->cleanAndFormatText($text);
+
+        // Разделите текст на части (например, по 2000 символов)
+        $chunkSize = 2500;
+        $chunks = str_split($text, $chunkSize);
+
+        // Получите текущую страницу из запроса
+        $page = $request->input('page', 1);
+
+        // Определите общее количество страниц
+        $totalPages = count($chunks);
+
+        // Убедитесь, что текущая страница не выходит за пределы
+        if ($page > $totalPages) {
+            $page = $totalPages;
+        } elseif ($page < 1) {
+            $page = 1;
+        }
+
+        // Извлеките текущую часть текста
+        $currentChunk = $chunks[$page - 1] ?? '';
+
+        // Верните представление с текущей частью текста и информацией о пагинации
+        return view('pdf', [
+            'currentChunk' => $currentChunk,
+            'page' => $page,
+            'totalPages' => $totalPages
+        ]);
     }
+
+    private function cleanAndFormatText($text)
+    {
+        // Удаление лишних пробелов
+        $text = trim($text);
+        $text = preg_replace('/\s+/', ' ', $text);
+
+        // Замена специальных символов новой строки на HTML <br>
+        $text = nl2br($text);
+
+        // Можно добавить дополнительные шаги по очистке и форматированию текста
+
+        return $text;
+    }
+
 
     public function bookMarksCreate($id)
     {

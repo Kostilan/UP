@@ -5,11 +5,9 @@
 @section('content')
     <div class="container">
         <h2>Список книг</h2>
-        <div class="d-flex justify-content-between mb-3">
-            <a class="btn btn-primary" href="{{route('bookCreate')}}">Создать книгу</a>
-           
+        <div class="">
+            <a class="btn btn-admin" href="{{route('bookCreate')}}">Создать книгу</a>
         </div>
-
         <table class="table container">
             <thead>
                 <tr>
@@ -35,7 +33,7 @@
                             </td>
                             <td>
                                 <a href="{{ url('bookProduct', $book->id) }}">
-                                    <img class="main-book-img" src="{{ asset('storage/photo/' . $book->photo) }}" alt="{{ $book->title_book }}">
+                                    <img class="admin-book-img" src="{{ asset('storage/photo/' . $book->photo) }}" alt="{{ $book->title_book }}">
                                 </a>
                             </td>
                             <td>

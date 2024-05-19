@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Главная страница')
+@section('title', 'Книги')
 
 @section('content')
     <div class="container-flex">

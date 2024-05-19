@@ -9,7 +9,8 @@
             <p class="book-text-name">
                 {{ $book->title_book }}
             </p>
-            <p class="">Автор: <a href="{{ route('authorsBooks', ['id' => $book->author->id]) }}">{{ $book->author->surname_author }}
+            <p class="">Автор: <a
+                    href="{{ route('authorsBooks', ['id' => $book->author->id]) }}">{{ $book->author->surname_author }}
                     {{ $book->author->name_author }}</a></p>
             <div class="book-container">
                 <span class="book-evaluation"> {{ number_format($book->comments->avg('evaluation'), 1) }} &#9733; <br>
@@ -25,6 +26,7 @@
             <div class="">
                 @auth
                     @if ($subscriptions)
+                        {{-- <a href="{{ route('readDocument', ['filename' => $book->document]) }}"> --}}
                         <a href="{{ route('readDocument', ['filename' => $book->document]) }}">
                             <div class="book-block fs-6 me-3">Читать полностью</div>
                         </a>
@@ -32,16 +34,16 @@
                         <a href="{{ route('readDocument', ['filename' => $book->document]) }}">
                             <div class="book-block fs-6 me-3">Читать фрагмент</div>
                         </a>
-                        @endif
-                        @if (!$isBookMark)
-                            <a href="/bookProduct/bookMarks/{{ $book->id }}">
-                                <div class="book-block fs-6">Добавить в закладки &#10084;</div>
-                            </a>
-                        @else
-                            <a href="/bookProduct/bookMarks/{{ $book->id }}/delete">
-                                <div class="book-block fs-6">Удалить из закладок &#10084;</div>
-                            </a>
-                        @endif
+                    @endif
+                    @if (!$isBookMark)
+                        <a href="/bookProduct/bookMarks/{{ $book->id }}">
+                            <div class="book-block fs-6">Добавить в Избранное &#10084;</div>
+                        </a>
+                    @else
+                        <a href="/bookProduct/bookMarks/{{ $book->id }}/delete">
+                            <div class="book-block fs-6">Удалить из Избранного &#10084;</div>
+                        </a>
+                    @endif
                 </div>
             @endauth
             <section class="">
@@ -51,6 +53,11 @@
             <p class="fw-bold">Жанры: @foreach ($genres as $item)
                     <a class="link-dark"
                         href="{{ route('genreBooks', ['id' => $item->id]) }}">{{ $item->title_genre }}</a>
+                @endforeach
+            </p>
+            <p class="fw-bold">Категории: @foreach ($categories as $item)
+                    <a class="link-dark"
+                        href="{{ route('categoryBooks', ['id' => $item->id]) }}">{{ $item->title_category }}</a>
                 @endforeach
             </p>
             <section class=" w-75">

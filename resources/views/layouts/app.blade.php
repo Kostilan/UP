@@ -16,7 +16,7 @@
 
 <body>
     <header>
-        <a class="navbar-brand" href="{{ route('index') }}">ПроЧитай</a>
+        <a class="navbar-brand" href="{{ route('index') }}"> <img class="logo" src="{{ asset('storage/photo/logo.png')}}" alt="Прочитай"> </a>
         <nav class="nav">
             <ul class="nav-list">
                 @guest
@@ -73,7 +73,7 @@
                         </li>
                     @endif
                     <li>
-                        <a href="{{ route('signout') }}">Выход</a>
+                        <a class="text-red" href="{{ route('signout') }}">Выход</a>
                     </li>
                 @endauth
             </ul>

@@ -17,6 +17,6 @@
       @endforeach
 
       <div class="pagination">
-          {{ $books->links() }}
+        {{ $books->links('vendor/pagination/custom') }}
       </div>
   </div>

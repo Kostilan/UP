@@ -3,42 +3,42 @@
 @section('title', 'Аккаунт')
 
 @section('content')
-    <main class="">
-        <div class="genre ">
-            <ul class="genre-list">
-                <li class="list-group-item">
-                    <h3>Аккаунт</h3>
-                </li>
-                <li class="list-group-item"><a id="" class="link-dark link-underline-light" href="/account">Обо
-                        мне</a></li>
-                <li class="list-group-item"><a id="accountBookmark" class="link-dark link-underline-light"
-                        href="/account/accountBookMarks">Закладки</a></li>
-            </ul>
+    <main class="container-flex">
+        <div class="genre-left">
+            <div class="genre ">
+                <ul class="genre-list">
+                    <li class="list-group-item">
+                        <h3>Аккаунт</h3>
+                    </li>
+                    <li class="list-group-item"><a id="" class="link-dark link-underline-light" href="/account">Обо
+                            мне</a></li>
+                    <li class="list-group-item"><a id="accountBookmark" class="link-dark link-underline-light"
+                            href="/account/accountBookMarks">Закладки</a></li>
+                </ul>
+            </div>
         </div>
         <div id="bodyAccount" class="container">
-            <div class="accountUser">
+            <div class="">
                 <h1>Обо мне</h1>
                 <form action="/account/accountUserUpdate" method="POST">
                     @csrf
                     <div class="form-div">
                         <label for="surname" class="form-label">Фамилия</label>
-                        <input type="text" class="form-input" id="" name="surname"
-                            value="{{ $user->surname }}">
+                        <input type="text" class="form-account" id="" name="surname" value="{{ $user->surname }}">
                         @error('surname')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-div">
                         <label for="name" class="form-label">Имя</label>
-                        <input type="text" class="form-input" id="" name="name"
-                            value="{{ $user->name }}">
+                        <input type="text" class="form-account" id="" name="name" value="{{ $user->name }}">
                         @error('name')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-div">
                         <label for="patronymic" class="form-label">Отчество</label>
-                        <input type="text" class="form-input" id="" name="patronymic"
+                        <input type="text" class="form-account" id="" name="patronymic"
                             value="{{ $user->patronymic }}">
                         @error('patronymic')
                             <div class="text-danger">{{ $message }}</div>
@@ -46,23 +46,21 @@
                     </div>
                     <div class="form-div">
                         <label for="login" class="form-label">Логин</label>
-                        <input type="text" class="form-input" id="" name="login"
-                            value="{{ $user->login }}">
+                        <input type="text" class="form-account" id="" name="login" value="{{ $user->login }}">
                         @error('login')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-div">
                         <label for="email" class="form-label">Почта</label>
-                        <input type="email" class="form-input" id="" name="email"
-                            value="{{ $user->email }}">
+                        <input type="email" class="form-account" id="" name="email" value="{{ $user->email }}">
                         @error('email')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-div">
                         <label for="birthday" class="form-label">Дата рождения</label>
-                        <input type="date" class="form-input" id="" name="birthday"
+                        <input type="date" class="form-account" id="" name="birthday"
                             value="{{ $user->birthday }}">
                         @error('birthday')
                             <div class="text-danger">{{ $message }}</div>
@@ -70,7 +68,7 @@
                     </div>
                     <div class="form-div">
                         <label for="phone" class="form-label">Телефон</label>
-                        <input type="number" class="form-input" id="" name=phone value="{{ $user->phone }}">
+                        <input type="number" class="form-account" id="" name=phone value="{{ $user->phone }}">
                         @error('phone')
                             <div class="text-danger">{{ $message }}</div>
                         @enderror
