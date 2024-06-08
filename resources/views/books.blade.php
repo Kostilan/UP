@@ -29,9 +29,10 @@
                                     <div class="book-info">
                                         <a class="link-dark" href="{{ url('bookProduct', $book->id) }}">
                                             <p>{{ $book->title_book }}</p>
-                                            <p class="opacity-75">{{ $book->author->surname_author }}
-                                                {{ $book->author->name_author }}</p>
                                         </a>
+                                        <p class="">Автор: <a
+                                                href="{{ route('authorsBooks', ['id' => $book->author->id]) }}">{{ $book->author->surname_author }}
+                                                {{ $book->author->name_author }}</a></p>
                                         <p class="fw-bold">Жанры:
                                             @foreach ($book->genres as $item)
                                                 <a class="link-dark"

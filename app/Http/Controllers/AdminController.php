@@ -11,15 +11,62 @@ use App\Models\Publication;
 use App\Models\Author;
 use App\Models\LinkBookGenre;
 use App\Models\LinkBookCategory;
-
-
+use App\Models\Subscription;
+use App\Models\TypeSubscription;
+use Carbon\Carbon;
+use App\Models\Note;
 
 class AdminController extends Controller
 {
+
+    // Статистика
+
+    public function admin_statistics()
+    {
+        // Получение данных о прогрессе чтения
+        $readingProgress = Note::with('book')
+            ->get()
+            ->groupBy('book_id')
+            ->map(function ($notes) {
+                $book = $notes->first()->book;
+                $totalPages = $book->pages;
+                $currentPage = $notes->sum('page');
+                $progress = $totalPages > 0 ? ($currentPage / $totalPages) * 100 : 0;
+                return [
+                    'book_title' => $book->title_book,
+                    'progress' => round($progress),
+                ];
+            })
+            ->values(); // Ensure it's a flat array
+
+        return view('admin.statistics', compact('readingProgress'));
+    }
+    // Подписка
+    //     public function admin_subscriptions()
+    // {
+    //     // Получаем данные для графика
+    //     $subscriptions = Subscription::with('typeSubscription')->get();
+
+    //     // Группируем данные по месяцам и типу подписки
+    //     $subscriptionData = $subscriptions->groupBy(function ($subscription) {
+    //         return Carbon::parse($subscription->subscription_start_date)->format('Y-m');
+    //     })->map(function ($group) {
+    //         return $group->groupBy('subscription_type_id')->map(function ($items) {
+    //             return [
+    //                 'count' => $items->count(),
+    //                 'total_amount' => $items->sum(function ($sub) {
+    //                     return $sub->typeSubscription->cost_title_subscription ?? 0;
+    //                 })
+    //             ];
+    //         });
+    //     });
+
+    //     return view('admin.subscriptions_admin', compact('subscriptionData'));
+    // }
     // Книги
     public function admin()
     {
-        $books = Book::paginate(6);
+        $books = Book::paginate(3);
         return view('admin.books', ["books" => $books,]);
     }
     public function bookDelete($id)
@@ -27,12 +74,15 @@ class AdminController extends Controller
         // Найдем книгу по ее идентификатору
         $book = Book::findOrFail($id);
 
-
+        // Удалим книгу
+        LinkBookCategory::where('book_id', $id)->delete();
+        LinkBookGenre::where('book_id', $id)->delete();
         $book->delete();
 
-
+        // Перенаправим обратно с сообщением об успехе
         return redirect()->back()->with('success', 'Книга успешно удалена');
     }
+
 
     function bookUpdate($id)
     {
@@ -59,7 +109,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'title_book' => 'required|string|max:100',
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:200',
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif',
             'document' => 'required|mimes:pdf',
             'author_id' => 'required|exists:authors,id',
             'publication_id' => 'required|exists:publications,id',
@@ -119,7 +169,7 @@ class AdminController extends Controller
         // Проверим валидность входных данных
         $request->validate([
             'title_book' => 'required|string|max:255',
-            'photo' => 'image|mimes:jpeg,png,jpg,gif', 
+            'photo' => 'image|mimes:jpeg,png,jpg,gif',
             'document' => 'mimes:pdf',
             'author_id' => 'required|exists:authors,id',
             'publication_id' => 'required|exists:publications,id',

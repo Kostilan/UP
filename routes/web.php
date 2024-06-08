@@ -9,14 +9,16 @@ use App\Http\Controllers\CommentController;
 
 // general
 Route::get('/', [BookController::class, 'index'])->name("index");
+Route::get('/search', [BookController::class, 'search'])->name("search");
 Route::get('/newBooks', [BookController::class, 'newBooks'])->name("newBooks");
 Route::get('/popularBooks', [BookController::class, 'popularBooks'])->name("popularBooks");
 Route::get('/genreBooks/{id}', [BookController::class, 'genreBooks'])->name("genreBooks");
 Route::get('/categoryBooks/{id}', [BookController::class, 'categoryBooks'])->name("categoryBooks");
 Route::get('/authorsBooks/{id}', [BookController::class, 'authorsBooks'])->name("authorsBooks");
 Route::get('/bookProduct/{id}', [BookController::class, 'bookProduct'])->name("bookProduct");
-// Route::get('/book/{id}/view', [BookController::class,'viewPdf'])->name("viewPdf");
-Route::get('/bookProduct/readDocument/{filename}', [BookController::class,'readDocument'] )->name('readDocument')->middleware('auth');
+Route::post('//bookProduct/readDocument/bookmark', [BookController::class, 'addBookmark'])->name('addBookmark');
+Route::get('/bookProduct/readDocument/continue_reading/{id}', [BookController::class, 'continue_reading'])->name('continue_reading');
+Route::get('/bookProduct/readDocument/{filename}/{id}', [BookController::class, 'readDocument'])->name('readDocument');
 Route::get('/bookProduct/bookMarks/{id}', [BookController::class, 'bookMarksCreate'])->name("bookMarksCreate")->middleware('auth'); 
 Route::get('/bookProduct/bookMarks/{id}/delete', [BookController::class, 'bookMarksDelete'])->name("bookMarksDelete")->middleware('auth');
 
@@ -27,14 +29,16 @@ Route::get('/signout', [UserController::class, 'signout'])->name("signout");
     // user - comments
     Route::post('/bookProduct/commentCreate', [CommentController::class, 'commentCreate'])->name("commentCreate")->middleware('auth');
     Route::post('/bookProduct/commentUpdate/{id}', [CommentController::class, 'commentUpdate'])->name("commentUpdate")->middleware('auth');
-    Route::get('/bookProduct/reviewCreate/{id}', [CommentController::class, 'reviewCreate'])->name("reviewCreate")->middleware('auth');
-    Route::post('/bookProduct/reviewCreate_valid', [CommentController::class, 'reviewCreate_valid'])->name("reviewCreate_valid")->middleware('auth');
-    Route::put('/reviews/{id}/update', [CommentController::class, 'reviewUpdate_valid'])->name('reviewUpdate_valid')->middleware('auth');
+    // Route::get('/bookProduct/reviewCreate/{id}', [CommentController::class, 'reviewCreate'])->name("reviewCreate")->middleware('auth');
+    // Route::post('/bookProduct/reviewCreate_valid', [CommentController::class, 'reviewCreate_valid'])->name("reviewCreate_valid")->middleware('auth');
+    // Route::put('/reviews/{id}/update', [CommentController::class, 'reviewUpdate_valid'])->name('reviewUpdate_valid')->middleware('auth');
     // user - account
     Route::get('/account', [UserController::class, 'account'])->name("account")->middleware('auth');
     Route::get('/account/accountUser', [UserController::class, 'accountUser'])->name("accountUser")->middleware('auth');
     Route::post('/account/accountUserUpdate', [UserController::class, 'accountUserUpdate'])->name("accountUserUpdate")->middleware('auth');
     Route::get('/account/accountBookMarks', [UserController::class, 'accountBookMarks'])->name("accountBookMarks")->middleware('auth');
+    Route::get('/account/accountComments', [UserController::class, 'accountComments'])->name("accountComments")->middleware('auth');
+    Route::get('/account/accountRead', [UserController::class, 'accountRead'])->name("accountRead")->middleware('auth');
     // user - subscriptions
     Route::get('/subscriptions', [SubscriptionController::class, 'subscriptions'])->name("subscriptions")->middleware('auth');
     Route::post('/subscriptions/subscriptionCreate', [SubscriptionController::class, 'subscriptionCreate'])->name("subscriptionCreate")->middleware('auth');
@@ -46,7 +50,11 @@ Route::middleware('CheckRole:1')->group(function () {
     Route::post('/admin/bookCreaten', [AdminController::class, 'bookCreate_valid'])->name("bookCreate_valid");
     Route::get('/admin/bookUpdate/{id}', [AdminController::class, 'bookUpdate'])->name("bookUpdate");
     Route::post('/admin/bookUpdaten/{id}', [AdminController::class, 'bookUpdatemin_valid'])->name('bookUpdatemin_valid');
-    Route::get('/admin/books/delete/{ $id}', [AdminController::class, 'bookDelete'])->name("bookDelete");
+    Route::delete('/admin/books/delete/{id}', [AdminController::class, 'bookDelete'])->name("bookDelete");
+
+    // Статистика
+    Route::get('/admin/statistics', [AdminController::class, 'admin_statistics'])->name("admin_statistics");
+    // 
 
     // Издательства
     Route::get('/admin/publications', [AdminController::class, 'publications'])->name("publications");
@@ -80,19 +88,17 @@ Route::middleware('CheckRole:1')->group(function () {
      Route::post('/admin/categories/categoryCreate', [BookController::class, 'categoryCreate'])->name("categoryCreate");
      Route::post('/admin/categories/categoryUpdate', [BookController::class, 'categoryUpdate'])->name("categoryUpdate");
 }); 
-// жанры по левому краю , добавить популянрые жанры о книги, из закладок в избранное, кнопку добавить на карточку
-// На главную вывести несколько новинки и популярные, слайдер с преимуществами подписки, кнопка на подписку там должжна быть
-// Добавить новости, в подвале продублировать жанры и подписки
+
+// https://ethereal.email/
+// Имя Lonny Barrows
+// Имя пользователя lonny57@ethereal.email
+// Пароль V5fuDSHWkH1qPE8UFW
 
 
-// По объемым страницам сделать, иконки акканту, избранному и логотип сделать через ИИ
 
 
-// Разбит по страницам, если смогу изменения фона и цвета текста разделение страниц по кол-ву символов
-// Сделать к представлению чтения одельное подключение стилей
+// Сделать в кабинете избранное а закладки в книге
 
+// В чтении отступ сделать только и не больше 5-6 кнопок в пагинации
 
-// Подвал внизу
-// Админ картинки уменьшить
-// на карточки сделать показ жанров со скрытием с примера
-// карту сайта писать вместо модульной схемы
+// В админке сделать синие кнопки разного оттеннка, поменять на иконки

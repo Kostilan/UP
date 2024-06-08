@@ -15,11 +15,13 @@
                 @endforeach
             </ul>
         </div>
-        <div class="list-catalog">
-            @if ($books->count())
-                @foreach ($books->chunk(3) as $chunkedBooks)
+        <div>
+
+            <div class="list-catalog">
+                @if ($popularAuthorsBooks->count())
+                    <h2>Популярные книги популярных авторов</h2>
                     <div class="book-list mb-5">
-                        @foreach ($chunkedBooks as $book)
+                        @foreach ($popularAuthorsBooks as $book)
                             <div class="book">
                                 <div class="book-inner">
                                     <a href="{{ url('bookProduct', $book->id) }}">
@@ -29,9 +31,10 @@
                                     <div class="book-info">
                                         <a class="link-dark" href="{{ url('bookProduct', $book->id) }}">
                                             <p>{{ $book->title_book }}</p>
-                                            <p class="opacity-75">{{ $book->author->surname_author }}
-                                                {{ $book->author->name_author }}</p>
                                         </a>
+                                        <p class="">Автор: <a
+                                                href="{{ route('authorsBooks', ['id' => $book->author->id]) }}">{{ $book->author->surname_author }}
+                                                {{ $book->author->name_author }}</a></p>
                                         <p class="fw-bold">Жанры:
                                             @foreach ($book->genres as $item)
                                                 <a class="link-dark"
@@ -50,13 +53,59 @@
                             </div>
                         @endforeach
                     </div>
-                @endforeach
-                <div class="pagination">
-                    {{ $books->links('vendor/pagination/custom') }}
-                </div>
-            @else
-                <p>Книги не найдены.</p>
-            @endif
+                @else
+                    <p>Популярные книги популярных авторов не найдены.</p>
+                @endif
+            </div>
+
+
+
+            <div class="list-catalog">
+                @if ($books->count())
+                    <h2>Каталог книг</h2>
+                    @foreach ($books->chunk(3) as $chunkedBooks)
+                        <div class="book-list mb-5">
+                            @foreach ($chunkedBooks as $book)
+                                <div class="book">
+                                    <div class="book-inner">
+                                        <a href="{{ url('bookProduct', $book->id) }}">
+                                            <img class="main-book-img" src="{{ asset('storage/photo/' . $book->photo) }}"
+                                                alt="{{ $book->title_book }}">
+                                        </a>
+                                        <div class="book-info">
+                                            <a class="link-dark" href="{{ url('bookProduct', $book->id) }}">
+                                                <p>{{ $book->title_book }}</p>
+                                            </a>
+                                            <p class="">Автор: <a
+                                                    href="{{ route('authorsBooks', ['id' => $book->author->id]) }}">{{ $book->author->surname_author }}
+                                                    {{ $book->author->name_author }}</a></p>
+                                            <p class="fw-bold">Жанры:
+                                                @foreach ($book->genres as $item)
+                                                    <a class="link-dark"
+                                                        href="{{ route('genreBooks', ['id' => $item->id]) }}">{{ $item->title_genre }}</a>
+                                                @endforeach
+                                            </p>
+                                            <p class="fw-bold">Категории:
+                                                @foreach ($book->categories as $item)
+                                                    <a class="link-dark"
+                                                        href="{{ route('categoryBooks', ['id' => $item->id]) }}">{{ $item->title_category }}</a>
+                                                @endforeach
+                                            </p>
+                                            <a href="{{ url('bookProduct', $book->id) }}"
+                                                class="btn btn-primary">Подробнее</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endforeach
+                    <div class="pagination">
+                        {{ $books->links('vendor/pagination/custom') }}
+                    </div>
+                @else
+                    <p>Книги не найдены.</p>
+                @endif
+            </div>
         </div>
 
         <div class="genre genre-right">

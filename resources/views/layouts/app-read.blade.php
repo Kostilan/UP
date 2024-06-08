@@ -19,7 +19,7 @@
         <nav class="nav">
             <ul class="nav-list">
                     <li>
-                        <a href="{{ route('index') }}">Назад</a>
+                        <a href="{{route ('bookProduct', ['id' => $id])}}">Назад</a>
                     </li>
             </ul>
         </nav>

@@ -9,14 +9,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title')</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <!-- Подключение скомпилированного CSS -->
+    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 
     <script src="{{ asset('js/jquery-3.7.0.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ asset('js/ckeditor.js') }}"></script>
     <script src="{{ asset('js/index.js') }}"></script>
+    <script src="{{ asset('node_modules/@ckeditor/ckeditor5-build-classic/build/ckeditor.js') }}"></script>
+
 </head>
+{{-- TUFJQrwbmlJfCj6GfoIkG4A24mepJ1HiEUoZXGz76V5M1Xc1O8QgwiBZE8ns --}}
 
 <body>
     <header>
-        <a class="navbar-brand" href="{{ route('index') }}"> <img class="logo" src="{{ asset('storage/photo/logo.png')}}" alt="Прочитай"> </a>
+        <a class="navbar-brand" href="{{ route('index') }}"> <img class="logo"
+                src="{{ asset('storage/photo/logo_1.png') }}" alt="Прочитай"> </a>
+        <form action="{{ route('search') }}" method="GET" class="search-form">
+            <input type="text" name="query" class="search-input" placeholder="Поиск...">
+            <button type="submit" class="search-button">Поиск</button>
+        </form>
         <nav class="nav">
             <ul class="nav-list">
                 @guest
@@ -53,6 +65,9 @@
                         <li>
                             <a href="{{ route('publications') }}">Издательства</a>
                         </li>
+                        <li>
+                            <a href="{{ route('admin_statistics') }}">Статистика чтения</a>
+                        </li>
                     @endif
 
                     @if (Auth::user()->role_id == 2)
@@ -67,9 +82,6 @@
                         </li>
                         <li>
                             <a href="{{ route('account') }}">Кабинет</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('subscriptions') }}">Подписка</a>
                         </li>
                     @endif
                     <li>
@@ -192,19 +204,17 @@
     </div>
 
     @if (session('success'))
-        <div class="">{{ session('success') }}</div>
+        <div class="alert-success">{{ session('success') }}</div>
     @endif
     <div id="content">
         @yield('content')
         <!-- Этот блок будет заполняться содержимым из производных шаблонов -->
     </div>
 
-    <footer class="">
+    <footer>
         <!-- Нижний колонтитул сайта -->
         <p>&copy; 2024 Мой сайт. Все права защищены.</p>
     </footer>
-
-    <!-- Добавьте здесь ваши общие скрипты -->
 </body>
 
 </html>

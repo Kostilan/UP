@@ -9,10 +9,12 @@ use App\Jobs\ProcessPdfConversion;
 
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\Book;
 use App\Models\BookMark;
+use App\Models\Note;
 use App\Models\Genre;
 use App\Models\LinkBookGenre;
 use App\Models\Publication;
@@ -29,35 +31,50 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class BookController extends Controller
 {
-    // public function viewPdf($id)
-    // {
-    //     $book = Book::findOrFail($id);
-    //     $pdfPath = storage_path('app/public/document/' . $book->document);
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
 
-    //     // Создаем объект парсера PDF
-    //     $parser = new Parser();
-    //     // Получаем объект PDF
-    //     $pdf = $parser->parseFile($pdfPath);
+        // Поиск по книгам, авторам, категориям и жанрам
+        $books = Book::where('title_book', 'like', "%$query%")
+            ->orWhereHas('author', function ($q) use ($query) {
+                $q->where('name_author', 'like', "%$query%")
+                    ->orWhere('surname_author', 'like', "%$query%");
+            })
+            ->orWhereHas('categories', function ($q) use ($query) {
+                $q->where('title_category', 'like', "%$query%");
+            })
+            ->orWhereHas('genres', function ($q) use ($query) {
+                $q->where('title_genre', 'like', "%$query%");
+            })
+            ->paginate(6);
 
-    //     // Извлекаем текст со всех страниц PDF
-    //     $pdfText = '';
-    //     foreach ($pdf->getPages() as $page) {
-    //         $pdfText .= $page->getText();
-    //     }
-
-    //     return view('pdf', compact('pdfText'));
-    // }
+        return view('search_results', compact('books'));
+    }
 
     public function index()
     {
         $genres = Genre::all();
         $categories = Category::all();
+        
+        // Получение популярных авторов (авторы с наибольшим количеством книг)
+        $popularAuthors = Author::withCount('book')
+            ->orderBy('book_count', 'desc')
+            ->paginate(3);
+    
+        // Получение книг популярных авторов (ограничено тремя книгами)
+        $popularAuthorsBooks = Book::whereIn('author_id', $popularAuthors->pluck('id'))
+            ->with(['author', 'genres', 'categories'])
+            ->limit(3)
+            ->get();
+    
         $books = Book::with(['author', 'genres', 'categories'])->paginate(6);
     
         return view('index', [
             'books' => $books,
             'genres' => $genres,
             'categories' => $categories,
+            'popularAuthorsBooks' => $popularAuthorsBooks,
         ]);
     }
 
@@ -109,8 +126,10 @@ class BookController extends Controller
 
     public function bookProduct($id)
     {
-        $subscriptions = Subscription::where('user_id', Auth::id())->get();
         $book = Book::find($id);
+        $note = Note::where('book_id',$id)->where('user_id',Auth::id())->first();
+        $comments = $book->comments()->paginate(3);
+        $userComment = $book->comments()->where('user_id', auth()->id())->first();
         $genre_links = LinkBookGenre::where('book_id', $id)->get();
         $category_links = LinkBookCategory::where('book_id', $id)->get();
         $genres = [];
@@ -146,71 +165,128 @@ class BookController extends Controller
                 'isBookMark' => (Auth::check() && $isBookMark),
                 'genres' => $genres,
                 'categories' => $categories,
-                'subscriptions' => $subscriptions
+                'comments' => $comments,
+                'userComment' => $userComment,
+                'note' => $note
             ]
         );
     }
 
-
-    public function readDocument($filename, Request $request)
+    public function addBookmark(Request $request)
     {
-        // Получите путь к PDF-файлу из хранилища
+        $userId = Auth::id();
+        $bookId = $request->input('book_id');
+        $page = $request->input('page');
+        $allPages = $request->input('all_pages'); // Получаем значение общего количества страниц
+    
+        Note::updateOrCreate(
+            ['user_id' => $userId, 'book_id' => $bookId],
+            ['page' => $page, 'all_pages' => $allPages] // Сохраняем как текущую страницу, так и общее количество страниц
+        );
+    
+        return redirect()->back()->with('message', 'Закладка добавлена!');
+    }
+
+    public function readDocument($filename, Request $request, $id)
+    {
         $filePath = storage_path('app/public/document/' . $filename);
-
-        // Проверьте существование файла
+    
         if (!file_exists($filePath)) {
-            abort(404); // Файл не найден
+            abort(404);
         }
-
-        // Извлеките текст из PDF-файла
-        $parser = new \Smalot\PdfParser\Parser();
+    
+        $parser = new Parser();
         $pdf = $parser->parseFile($filePath);
-        $text = $pdf->getText();
-
-        // Очистка и форматирование текста
+        $pages = $pdf->getPages();
+    
+        $textChunks = [];
+        foreach ($pages as $page) {
+            $textChunks[] = $page->getText();
+        }
+    
+        $text = implode("\n\n", $textChunks);
         $text = $this->cleanAndFormatText($text);
-
-        // Разделите текст на части (например, по 2000 символов)
+    
         $chunkSize = 2500;
-        $chunks = str_split($text, $chunkSize);
-
-        // Получите текущую страницу из запроса
-        $page = $request->input('page', 1);
-
-        // Определите общее количество страниц
+        $chunks = $this->splitTextIntoChunks($text, $chunkSize);
+    
+        $userId = Auth::id();
+        $note = Note::where('user_id', $userId)->where('book_id', $id)->first();
+    
+        // Получаем значение page из запроса, если оно есть, иначе из закладки или по умолчанию 1
+        $page = $request->input('page', $note ? $note->page : 1);
+    
         $totalPages = count($chunks);
-
-        // Убедитесь, что текущая страница не выходит за пределы
+    
         if ($page > $totalPages) {
             $page = $totalPages;
         } elseif ($page < 1) {
             $page = 1;
         }
-
-        // Извлеките текущую часть текста
+    
         $currentChunk = $chunks[$page - 1] ?? '';
-
-        // Верните представление с текущей частью текста и информацией о пагинации
+    
         return view('pdf', [
             'currentChunk' => $currentChunk,
             'page' => $page,
-            'totalPages' => $totalPages
+            'totalPages' => $totalPages,
+            'id' => $id
         ]);
+    }
+
+    public function continue_reading($id)
+    {
+        $userId = Auth::id();
+        $note = Note::where('user_id', $userId)->where('book_id', $id)->first();
+        
+        if ($note) {
+            $filename = Book::find($id)->document;
+            $page = $note->page;
+            // Отладочная информация
+            Log::info('Continue reading for user', ['user_id' => $userId, 'book_id' => $id, 'page' => $page, 'filename' => $filename]);
+    
+            return redirect()->route('readDocument', ['filename' => $filename, 'id' => $id, 'page' => $page]);
+        } else {
+            $filename = Book::find($id)->document;
+            // Отладочная информация
+            Log::info('Continue reading for user with no bookmark', ['user_id' => $userId, 'book_id' => $id, 'filename' => $filename]);
+    
+            return redirect()->route('readDocument', ['filename' => $filename, 'id' => $id]);
+        }
     }
 
     private function cleanAndFormatText($text)
     {
         // Удаление лишних пробелов
         $text = trim($text);
-        $text = preg_replace('/\s+/', ' ', $text);
 
-        // Замена специальных символов новой строки на HTML <br>
-        $text = nl2br($text);
+        // Разделение абзацев и диалогов
+        $text = preg_replace('/\n\s*\n/', '</p><p>', $text); // Абзацы
+        $text = preg_replace('/\n/', '<br>', $text); // Переносы строк внутри абзацев
 
-        // Можно добавить дополнительные шаги по очистке и форматированию текста
+        // Добавление тега абзаца в начало и конец текста
+        $text = '<p>' . $text . '</p>';
 
         return $text;
     }
+
+    private function splitTextIntoChunks($text, $chunkSize)
+    {
+        // Разделение текста на части с сохранением HTML-тегов
+        $chunks = [];
+        $offset = 0;
+        while ($offset < strlen($text)) {
+            $chunk = substr($text, $offset, $chunkSize);
+            $lastSpace = strrpos($chunk, ' ');
+            if ($lastSpace !== false && $offset + $chunkSize < strlen($text)) {
+                $chunk = substr($chunk, 0, $lastSpace);
+            }
+            $chunks[] = $chunk;
+            $offset += strlen($chunk);
+        }
+        return $chunks;
+    }
+
 
 
     public function bookMarksCreate($id)

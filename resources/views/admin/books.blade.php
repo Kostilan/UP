@@ -39,13 +39,12 @@
                             <td>
                                 {{-- <a href="{{route('bookUpdate', ['id' => $book->id])}}" class="btn btn-warning">Редактировать</a> --}}
                                 <a href="{{route('bookUpdate', ['id' => $book->id])}}" class="btn btn-warning">Редактировать</a>
-                                <form action="/admin/books/delete/{{ $book->id }}" method="POST"
-                                    style="display: inline;">
+                                <form action="{{ route('bookDelete', ['id' => $book->id]) }}" method="POST" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger"
-                                        onclick="return confirm('Вы уверены?')">Удалить</button>
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Вы уверены?')">Удалить</button>
                                 </form>
+                                
                             </td>
                         </tr>
                     @endforeach

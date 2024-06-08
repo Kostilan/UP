@@ -21,13 +21,40 @@
 
                 {{-- Array Of Links --}}
                 @if (is_array($element))
-                    @foreach ($element as $page => $url)
-                        @if ($page == $paginator->currentPage())
+                    @php
+                        $currentPage = $paginator->currentPage();
+                        $lastPage = $paginator->lastPage();
+                        $start = max($currentPage - 1, 1);
+                        $end = min($currentPage + 1, $lastPage);
+
+                        $showFirst = $currentPage > 3;
+                        $showLast = $currentPage < $lastPage - 2;
+                    @endphp
+
+                    {{-- Show first page and dots --}}
+                    @if ($showFirst)
+                        <li><a href="{{ $element[1] }}">1</a></li>
+                        @if ($currentPage > 4)
+                            <li class="disabled" aria-disabled="true"><span>...</span></li>
+                        @endif
+                    @endif
+
+                    {{-- Main loop --}}
+                    @foreach (range($start, $end) as $page)
+                        @if ($page == $currentPage)
                             <li class="active" aria-current="page"><span>{{ $page }}</span></li>
                         @else
-                            <li><a href="{{ $url }}">{{ $page }}</a></li>
+                            <li><a href="{{ $element[$page] }}">{{ $page }}</a></li>
                         @endif
                     @endforeach
+
+                    {{-- Show last page and dots --}}
+                    @if ($showLast)
+                        @if ($currentPage < $lastPage - 3)
+                            <li class="disabled" aria-disabled="true"><span>...</span></li>
+                        @endif
+                        <li><a href="{{ $element[$lastPage] }}">{{ $lastPage }}</a></li>
+                    @endif
                 @endif
             @endforeach
 
